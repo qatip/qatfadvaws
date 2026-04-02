@@ -1,4 +1,4 @@
-# Azure Advanced Terraform Training Repository
+# AWS Advanced Terraform Training Repository
 
 © 2026 Michael Coulling-Green — QA
 
@@ -6,7 +6,7 @@
 
 ## Overview
 
-This repository contains **training materials, example code, and lab artefacts** used in cloud infrastructure and DevOps training courses.
+This repository contains **training materials, example code, and lab artefacts** used in cloud infrastructure and git actions training courses.
 
 The content is designed to support **hands-on learning and instructor-led demonstrations** covering topics such as:
 
