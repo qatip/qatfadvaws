@@ -13,7 +13,6 @@ The content is designed to support **hands-on learning and instructor-led demons
 • Terraform infrastructure as code  
 • Cloud resource provisioning  
 • CI/CD pipeline integration  
-• Kubernetes deployments  
 • Governance and policy controls 
 • Automation and scripting
 
