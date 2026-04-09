@@ -10,6 +10,20 @@ resource "aws_vpc" "main" {
   }
 }
 
+resource "aws_default_security_group" "default" {
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name      = "DO-NOT-USE"
+    ManagedBy = "Terraform"
+    Purpose   = "Default SG - locked down"
+  }
+  ingress = []
+  egress  = []
+}
+
+
+
 resource "aws_subnet" "demo" {
   vpc_id     = aws_vpc.main.id
   cidr_block = var.subnet_cidr
@@ -23,12 +37,12 @@ resource "aws_subnet" "demo" {
 
 
 #/*
-# Phase 1-3
+# Phases 1, 2 & 3
 resource "aws_security_group" "demo" {
-  count       = length(var.security_groups)
-  name        = "${var.project_name}-${var.environment}-${var.security_groups[count.index]}"
-  description = "Security group for ${var.security_groups[count.index]}"
-  vpc_id      = aws_vpc.main.id
+  count = length(var.security_groups)
+  name  = "${var.project_name}-${var.environment}-secgp-${count.index}"
+  #name = "${var.project_name}-${var.environment}-secgp-${var.security_groups[count.index]}"
+  vpc_id = aws_vpc.main.id
 
   egress {
     from_port   = 0
@@ -36,45 +50,17 @@ resource "aws_security_group" "demo" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
-  tags = {
-    Name = "${var.project_name}-${var.environment}-${var.security_groups[count.index]}"
-    Role = var.security_groups[count.index]
-  }
+  tags = { Role = var.security_groups[count.index], Name = "${var.project_name}-${var.environment}-secgp-${var.security_groups[count.index]}" }
 }
 #*/
 
-
-/*
-#Phase 4
-resource "aws_security_group" "demo" {
-  count       = length(var.security_groups)
-  name        = "${var.project_name}-${var.environment}-${var.security_groups[count.index].name}"
-  description = var.security_groups[count.index].description
-  vpc_id      = aws_vpc.main.id
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "${var.project_name}-${var.environment}-${var.security_groups[count.index].name}"
-    Role = var.security_groups[count.index].name
-  }
-}
-*/
-
-
 /* 
-#Phase 5-6
+# Phase 4
 resource "aws_security_group" "demo" {
-  for_each    = var.security_groups
-  name        = "${var.project_name}-${var.environment}-${each.key}"
-  description = each.value.description
-  vpc_id      = aws_vpc.main.id
+  for_each = var.security_groups
+  name     = "${var.project_name}-${var.environment}-secgp-${each.key}"
+  #  name     = "secgp-${each.key}"
+  vpc_id = aws_vpc.main.id
 
   egress {
     from_port   = 0
@@ -83,9 +69,6 @@ resource "aws_security_group" "demo" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = {
-    Name = "${var.project_name}-${var.environment}-${each.key}"
-    Role = each.key
-  }
+  tags = { Role = each.value, Name = "${var.project_name}-${var.environment}-secgp-${each.key}" }
 }
 */
