@@ -1,0 +1,163 @@
+name: change-all
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "envs/**"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  validate-promotion-order:
+    name: Validate promotion order
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Read pinned network module versions
+        shell: pwsh
+        run: |
+          function Get-NetworkVersion {
+            param(
+              [Parameter(Mandatory=$true)]
+              [string]$Environment
+            )
+
+            $mainTf = "envs/$Environment/main.tf"
+
+            if (-not (Test-Path $mainTf)) {
+              throw "Cannot find $mainTf"
+            }
+
+            $content = Get-Content -Raw -Path $mainTf
+
+            $match = [regex]::Match(
+              $content,
+              'terraform-aws-module-network\.git\?ref=v?(\d+\.\d+\.\d+)'
+            )
+
+            if (-not $match.Success) {
+              throw "Could not detect network module version in $mainTf"
+            }
+
+            return [version]$match.Groups[1].Value
+          }
+
+          $devVersion  = Get-NetworkVersion -Environment "dev"
+          $testVersion = Get-NetworkVersion -Environment "test"
+          $prodVersion = Get-NetworkVersion -Environment "prod"
+
+          Write-Host "Detected network module versions:"
+          Write-Host "DEV  = $devVersion"
+          Write-Host "TEST = $testVersion"
+          Write-Host "PROD = $prodVersion"
+
+          if ($testVersion -gt $devVersion) {
+            throw "Promotion blocked: TEST network module version ($testVersion) is ahead of DEV ($devVersion)."
+          }
+
+          if ($prodVersion -gt $testVersion) {
+            throw "Promotion blocked: PROD network module version ($prodVersion) is ahead of TEST ($testVersion)."
+          }
+
+          Write-Host "Promotion order check passed."
+
+  dev:
+    name: Apply DEV
+    needs: validate-promotion-order
+    runs-on: ubuntu-latest
+    environment: dev
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Terraform Init
+        working-directory: envs/dev
+        run: terraform init -upgrade -input=false
+
+      - name: Terraform Plan
+        working-directory: envs/dev
+        run: terraform plan -input=false
+
+      - name: Terraform Apply
+        working-directory: envs/dev
+        run: terraform apply -auto-approve -input=false
+
+  test:
+    name: Apply TEST
+    needs: dev
+    runs-on: ubuntu-latest
+    environment: test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Terraform Init
+        working-directory: envs/test
+        run: terraform init -upgrade -input=false
+
+      - name: Terraform Plan
+        working-directory: envs/test
+        run: terraform plan -input=false
+
+      - name: Terraform Apply
+        working-directory: envs/test
+        run: terraform apply -auto-approve -input=false
+
+  prod:
+    name: Apply PROD
+    needs: test
+    runs-on: ubuntu-latest
+    environment: prod
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Terraform Init
+        working-directory: envs/prod
+        run: terraform init -upgrade -input=false
+
+      - name: Terraform Plan
+        working-directory: envs/prod
+        run: terraform plan -input=false
+
+      - name: Terraform Apply
+        working-directory: envs/prod
+        run: terraform apply -auto-approve -input=false

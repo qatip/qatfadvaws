@@ -1,0 +1,104 @@
+# Phase 4 - Enforcement
+
+variable "project_name" {
+  type = string
+
+  validation {
+    condition     = length(trimspace(var.project_name)) > 0
+    error_message = "project_name must not be empty."
+  }
+}
+
+variable "env" {
+  type = string
+
+  validation {
+    condition     = length(trimspace(var.env)) > 0
+    error_message = "env must not be empty."
+  }
+}
+
+variable "region" {
+  type = string
+
+  validation {
+    condition     = length(trimspace(var.region)) > 0
+    error_message = "region must not be empty."
+  }
+}
+
+variable "allow_groups" {
+  type = map(list(string))
+
+  validation {
+    condition = alltrue(flatten([
+      for group_name, cidrs in var.allow_groups : [
+        for cidr in cidrs :
+        trimspace(cidr) == "" || can(cidrhost(trimspace(cidr), 0))
+      ]
+    ]))
+    error_message = "Every non-empty allow_groups CIDR must be a valid IPv4 CIDR value. Whitespace is tolerated, but malformed CIDRs are not."
+  }
+}
+
+variable "security_group_rules" {
+  type = map(object({
+    type              = string
+    protocol          = string
+    destination_ports = list(string)
+    source_cidrs      = optional(list(string), [])
+    destination_cidrs = optional(list(string), [])
+    allow_groups      = optional(list(string), [])
+    description       = optional(string)
+  }))
+
+  validation {
+    condition = alltrue([
+      for rule_key, rule in var.security_group_rules :
+      contains(["ingress", "egress"], lower(trimspace(rule.type)))
+    ])
+    error_message = "Each security group rule type must be either ingress or egress."
+  }
+
+  validation {
+    condition = alltrue([
+      for rule_key, rule in var.security_group_rules :
+      contains(["tcp", "udp", "icmp", "1", "6", "17", "-1"], lower(trimspace(rule.protocol)))
+    ])
+    error_message = "Each security group rule protocol must be one of: tcp, udp, icmp, or -1."
+  }
+
+  validation {
+    condition = alltrue([
+      for rule_key, rule in var.security_group_rules :
+      length([for p in rule.destination_ports : trimspace(p) if trimspace(p) != ""]) > 0
+    ])
+    error_message = "Each security group rule must include at least one non-empty destination port."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for rule_key, rule in var.security_group_rules : [
+        for p in rule.destination_ports :
+        trimspace(p) != "" && can(tonumber(trimspace(p))) && tonumber(trimspace(p)) >= 0 && tonumber(trimspace(p)) <= 65535
+      ]
+    ]))
+    error_message = "Each destination port must be a whole number between 0 and 65535."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for rule_key, rule in var.security_group_rules : concat(
+        [
+          for cidr in try(rule.source_cidrs, []) :
+          trimspace(cidr) == "" || can(cidrhost(trimspace(cidr), 0))
+        ],
+        [
+          for cidr in try(rule.destination_cidrs, []) :
+          trimspace(cidr) == "" || can(cidrhost(trimspace(cidr), 0))
+        ]
+      )
+    ]))
+    error_message = "Every non-empty source_cidrs and destination_cidrs value must be a valid IPv4 CIDR value. Whitespace is tolerated, but malformed CIDRs are not."
+  }
+}

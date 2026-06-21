@@ -1,0 +1,13 @@
+environments:
+  governance:
+    owners:
+      - governance-admin
+  dev:
+    owners:
+      - {your username}
+  test:
+    owners:
+      - test-owner
+  prod:
+    owners:
+      - prod-owner
