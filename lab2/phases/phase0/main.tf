@@ -40,7 +40,7 @@ resource "aws_vpc_security_group_ingress_rule" "rule" {
               for g in try(rule.allow_groups, []) :
               lookup(var.allow_groups, g, [])
             ])
-          ) : {
+            ) : {
             rule_key    = rule_key
             type        = rule.type
             protocol    = rule.protocol
@@ -73,7 +73,7 @@ resource "aws_vpc_security_group_egress_rule" "rule" {
               for g in try(rule.allow_groups, []) :
               lookup(var.allow_groups, g, [])
             ])
-          ) : {
+            ) : {
             rule_key    = rule_key
             type        = rule.type
             protocol    = rule.protocol

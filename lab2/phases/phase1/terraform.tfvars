@@ -2,7 +2,7 @@
 
 project_name = "Landing-Zone"
 env          = "DEV"
-region       = "eu-west-2"
+region       = "us-west-2"
 
 # Global allow groups - intentionally messy:
 # - duplicates
@@ -44,11 +44,11 @@ security_group_rules = {
   }
 
   Allow-HTTPS-Partner = {
-    type               = "EGRESS"
-    protocol           = "Tcp"
-    destination_ports  = ["443"]
-    destination_cidrs  = ["172.16.0.50/32"]
-    allow_groups       = ["partner_networks"]
-    description        = "Allow-HTTPS-to-Partner"
+    type              = "EGRESS"
+    protocol          = "Tcp"
+    destination_ports = ["443"]
+    destination_cidrs = ["172.16.0.50/32"]
+    allow_groups      = ["partner_networks"]
+    description       = "Allow-HTTPS-to-Partner"
   }
 }

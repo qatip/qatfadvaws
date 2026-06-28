@@ -1,10 +1,27 @@
-# Phase 1 - Structure
+################################################################################
+# PHASE 1 - STRUCTURE
 #
-# This phase improves structure, but not data quality.
-# The input remains messy by design.
-# We move repeated logic into locals, but we do not yet
-# normalize, deduplicate, or validate the supplied data.
-
+# Purpose
+# -------
+# This phase separates transformation logic from resource creation.
+#
+# The original configuration performed all rule expansion directly inside the
+# resource blocks, making the configuration difficult to understand and maintain.
+#
+# In this phase we introduce locals to build the rule model first, allowing the
+# resources to simply consume the results.
+#
+# At this stage we DO NOT:
+#   • clean the data
+#   • remove duplicates
+#   • standardize naming
+#   • validate inputs
+#
+# The input remains intentionally chaotic.
+#
+# Think of this phase as moving logic into a pipeline without changing its
+# behaviour.
+################################################################################
 
 
 locals {
@@ -12,7 +29,7 @@ locals {
 
   base_tags = {
     App = var.project_name
-    ENV = var.env
+    Env = var.env
   }
 
   raw_ingress_rules = {
@@ -25,7 +42,7 @@ locals {
               for g in try(rule.allow_groups, []) :
               lookup(var.allow_groups, g, [])
             ])
-          ) : {
+            ) : {
             rule_key    = rule_key
             type        = rule.type
             protocol    = rule.protocol
@@ -49,7 +66,7 @@ locals {
               for g in try(rule.allow_groups, []) :
               lookup(var.allow_groups, g, [])
             ])
-          ) : {
+            ) : {
             rule_key    = rule_key
             type        = rule.type
             protocol    = rule.protocol

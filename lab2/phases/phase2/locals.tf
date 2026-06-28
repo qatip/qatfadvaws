@@ -1,4 +1,42 @@
-# Phase 2 - Determinism
+################################################################################
+# PHASE 2 - DETERMINISM
+#
+# Purpose
+# -------
+# Phase 1 improved the structure.
+# Phase 2 improves the data.
+#
+# This file now transforms inconsistent user input into a clean,
+# deterministic internal model.
+#
+# Pipeline
+#
+# Raw Input
+#      │
+#      ▼
+# Normalize
+#   • trim whitespace
+#   • standardize casing
+#   • remove duplicates
+#   • canonicalize names
+#      │
+#      ▼
+# Resolve
+#   • expand allow_groups
+#   • merge inherited and explicit CIDRs
+#      │
+#      ▼
+# Expand
+#   • create one effective rule per
+#     protocol / port / CIDR
+#
+# Resource blocks now consume only the effective_* locals.
+#
+# We still do NOT reject invalid input.
+# We simply produce a clean, predictable model.
+################################################################################
+
+
 
 locals {
   env_canon     = join("-", regexall("[a-z0-9]+", lower(trimspace(var.env))))
@@ -8,7 +46,7 @@ locals {
 
   base_tags = {
     App = local.project_canon
-    ENV = local.env_canon
+    Env = local.env_canon
   }
 
   allow_groups_clean = {

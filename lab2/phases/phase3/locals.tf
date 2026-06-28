@@ -1,4 +1,25 @@
-# Phase 3 - Visibility
+################################################################################
+# PHASE 3 - VISIBILITY
+#
+# Purpose
+# -------
+# The configuration is now clean and deterministic.
+#
+# This phase introduces helper locals that analyse the computed model and
+# identify logical problems before resources are created.
+#
+# These helpers detect issues such as:
+#
+# • unknown allow_groups
+# • empty effective rules
+# • unsupported protocols
+#
+# No enforcement takes place yet.
+#
+# The helper locals simply expose problems so Terraform check blocks can report
+# them to the user.
+################################################################################
+
 
 locals {
   env_canon     = join("-", regexall("[a-z0-9]+", lower(trimspace(var.env))))
@@ -8,7 +29,7 @@ locals {
 
   base_tags = {
     App = local.project_canon
-    ENV = local.env_canon
+    Env = local.env_canon
   }
 
   allow_groups_clean = {
@@ -145,7 +166,7 @@ locals {
     if length(rule.resolved_cidrs) == 0
   }
 
-  allowed_protocols = toset(["tcp", "udp", "icmp", "1", "6", "17", "-1"])
+  allowed_protocols = toset(["tcp", "udp", "icmp", "-1"])
 
   protocol_violations = {
     for rule_key, rule in local.security_group_rules_clean :

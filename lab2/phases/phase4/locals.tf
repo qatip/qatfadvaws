@@ -1,4 +1,31 @@
-# Phase 4 - Enforcement
+################################################################################
+# PHASE 4 - ENFORCEMENT
+#
+# Purpose
+# -------
+# The transformation pipeline is now complete.
+#
+# Raw Input
+#      ▼
+# Normalize
+#      ▼
+# Resolve
+#      ▼
+# Expand
+#      ▼
+# Detect
+#      ▼
+# Enforce
+#
+# This file now provides the final computed model together with the helper
+# locals used by lifecycle preconditions.
+#
+# Variable validation protects incoming input.
+#
+# Lifecycle preconditions protect the final computed infrastructure.
+#
+# Resource blocks now consume only validated, deterministic data.
+################################################################################
 
 locals {
   env_canon     = join("-", regexall("[a-z0-9]+", lower(trimspace(var.env))))
@@ -8,7 +35,7 @@ locals {
 
   base_tags = {
     App = local.project_canon
-    ENV = local.env_canon
+    Env = local.env_canon
   }
 
   allow_groups_clean = {
@@ -20,7 +47,7 @@ locals {
     ])
   }
 
- security_group_rules_clean = {
+  security_group_rules_clean = {
     for rule_key, rule in var.security_group_rules :
     join("-", regexall("[a-z0-9]+", lower(trimspace(rule_key)))) => {
       type     = lower(trimspace(rule.type))
@@ -145,7 +172,7 @@ locals {
     if length(rule.resolved_cidrs) == 0
   }
 
-  allowed_protocols = toset(["tcp", "udp", "icmp", "1", "6", "17", "-1"])
+  allowed_protocols = toset(["tcp", "udp", "icmp", "-1"])
 
   protocol_violations = {
     for rule_key, rule in local.security_group_rules_clean :

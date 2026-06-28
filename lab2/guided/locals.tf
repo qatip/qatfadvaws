@@ -8,7 +8,7 @@ locals {
 
   base_tags = {
     App = local.project_canon
-    ENV = local.env_canon
+    Env = local.env_canon
   }
 
   allow_groups_clean = {

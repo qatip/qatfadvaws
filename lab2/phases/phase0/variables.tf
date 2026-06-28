@@ -18,12 +18,12 @@ variable "allow_groups" {
 
 variable "security_group_rules" {
   type = map(object({
-    type               = string
-    protocol           = string
-    destination_ports  = list(string)
-    source_cidrs       = optional(list(string), [])
-    destination_cidrs  = optional(list(string), [])
-    allow_groups       = optional(list(string), [])
-    description        = optional(string)
+    type              = string
+    protocol          = string
+    destination_ports = list(string)
+    source_cidrs      = optional(list(string), [])
+    destination_cidrs = optional(list(string), [])
+    allow_groups      = optional(list(string), [])
+    description       = optional(string)
   }))
 }
