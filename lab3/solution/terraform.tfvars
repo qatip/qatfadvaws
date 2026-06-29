@@ -1,4 +1,4 @@
-# Lab 3 Starting Point - based on Lab 2 Phase 4 Enforcement
+# Lab 3 Solution
 
 project_name = "Landing-Zone"
 env          = "DEV"
@@ -54,7 +54,7 @@ security_group_rules = {
 }
 
 # ------------------------------------------------------------
-# Lab 3 starting point - intentionally separate subnet inputs.
+# Lab 3 Solution - Single subnet input
 # ------------------------------------------------------------
 
 subnet_cidrs = {

@@ -1,4 +1,4 @@
-# Lab 3 Starting Point - based on Lab 2 Phase 4 Enforcement
+# Lab 3 Starting Point
 
 locals {
   env_canon     = join("-", regexall("[a-z0-9]+", lower(trimspace(var.env))))
@@ -145,7 +145,7 @@ locals {
     if length(rule.resolved_cidrs) == 0
   }
 
-  allowed_protocols = toset(["tcp", "udp", "icmp", "1", "6", "17", "-1"])
+  allowed_protocols = toset(["tcp", "udp", "icmp", "-1"])
 
   protocol_violations = {
     for rule_key, rule in local.security_group_rules_clean :

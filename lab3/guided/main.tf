@@ -1,4 +1,4 @@
-# Lab 3 Starting Point - based on Lab 2 Phase 4 Enforcement
+# Lab 3 Starting Point
 
 resource "aws_vpc" "main" {
   cidr_block           = "10.50.0.0/16"

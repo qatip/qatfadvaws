@@ -61,7 +61,7 @@ variable "security_group_rules" {
   validation {
     condition = alltrue([
       for rule_key, rule in var.security_group_rules :
-      contains(["tcp", "udp", "icmp", "1", "6", "17", "-1"], lower(trimspace(rule.protocol)))
+      contains(["tcp", "udp", "icmp", "-1"], lower(trimspace(rule.protocol)))
     ])
     error_message = "Each security group rule protocol must be one of: tcp, udp, icmp, or -1."
   }
@@ -102,7 +102,7 @@ variable "security_group_rules" {
 }
 
 # ---------------------------------------------------------------------------
-# Lab 3 starting point
+# Lab 3 Solution
 # ---------------------------------------------------------------------------
 
 variable "subnet_cidrs" {
