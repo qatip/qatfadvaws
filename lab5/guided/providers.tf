@@ -9,7 +9,7 @@ terraform {
   }
 
   backend "s3" {
-    bucket       = "qatipint-tfstate-CHANGE-ME"
+    bucket       = "CHANGE-ME"
     key          = "default.tfstate"
     region       = "us-west-2"
     encrypt      = true
