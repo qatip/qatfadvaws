@@ -21,7 +21,10 @@ resource "aws_default_security_group" "default" {
   ingress = []
   egress  = []
 }
-
+# AWS automatically creates a default security group for every VPC.
+# We intentionally manage it with Terraform, remove all rules, and tag it
+# as DO-NOT-USE to discourage accidental attachment of workloads.
+# Course policy: all application security groups must be explicitly created.
 
 
 resource "aws_subnet" "demo" {

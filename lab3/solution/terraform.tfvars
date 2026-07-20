@@ -2,7 +2,7 @@
 
 project_name = "Landing-Zone"
 env          = "DEV"
-region       = "eu-west-2"
+region       = "us-west-2"
 
 # Global allow groups - intentionally messy:
 # - duplicates
