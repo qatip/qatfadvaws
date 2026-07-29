@@ -108,7 +108,7 @@ moved {
   from = aws_vpc_security_group_ingress_rule.rule["allow-https-office|tcp|443|172.16.2.0/24"]
   to   = module.network.aws_vpc_security_group_ingress_rule.rule["allow-https-office|tcp|443|172.16.2.0/24"]
 }
-#./
+#*/
 
 #/*
 moved {
