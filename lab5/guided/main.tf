@@ -113,6 +113,10 @@ resource "aws_instance" "web" {
   tags = merge(local.base_tags, {
     Name = "${local.prefix}-${each.key}"
   })
+
+  lifecycle {
+  ignore_changes = [tags]
+  }
 }
 
 
