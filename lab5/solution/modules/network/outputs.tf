@@ -6,7 +6,6 @@ output "security_group_id" {
 }
 
 output "module_version" {
- description = "Version of the network module"
- value = terraform_data.module_version.output.version
+  description = "Version of the network module"
+  value       = terraform_data.module_version.output.version
 }
-

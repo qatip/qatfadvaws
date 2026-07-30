@@ -1,9 +1,9 @@
 resource "terraform_data" "module_version" {
- input = {
- module = "compute"
- version = "Unversioned"
- change = "Initial compute module release"
- }
+  input = {
+    module  = "compute"
+    version = "Unversioned"
+    change  = "Initial compute module release"
+  }
 }
 
 data "aws_ami" "amazon_linux" {
@@ -33,6 +33,7 @@ resource "aws_instance" "web" {
   })
 
   lifecycle {
-  ignore_changes = [tags]
+    ignore_changes = [tags]
   }
 }
+

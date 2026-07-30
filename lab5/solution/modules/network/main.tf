@@ -1,9 +1,9 @@
 resource "terraform_data" "module_version" {
- input = {
- module = "network"
- version = "Unversioned"
- change = "Initial network module release"
- }
+  input = {
+    module  = "network"
+    version = "Unversioned"
+    change  = "Initial network module release"
+  }
 }
 
 resource "aws_vpc" "main" {
@@ -95,3 +95,4 @@ resource "aws_route_table_association" "subnet" {
   subnet_id      = each.value.id
   route_table_id = aws_route_table.main.id
 }
+
