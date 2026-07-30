@@ -1,3 +1,11 @@
+resource "terraform_data" "module_version" {
+ input = {
+ module = "compute"
+ version = "Unversioned"
+ change = "Initial compute module release"
+ }
+}
+
 data "aws_ami" "amazon_linux" {
   most_recent = true
   owners      = ["amazon"]

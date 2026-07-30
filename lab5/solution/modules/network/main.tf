@@ -1,3 +1,11 @@
+resource "terraform_data" "module_version" {
+ input = {
+ module = "network"
+ version = "Unversioned"
+ change = "Initial network module release"
+ }
+}
+
 resource "aws_vpc" "main" {
   cidr_block           = var.vpc_cidr
   enable_dns_support   = true
