@@ -23,4 +23,8 @@ resource "aws_instance" "web" {
   tags = merge(local.mod_tags, {
     Name = "${var.prefix}-${each.key}"
   })
+
+  lifecycle {
+  ignore_changes = [tags]
+  }
 }
