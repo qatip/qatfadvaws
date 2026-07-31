@@ -1,3 +1,4 @@
+/*
 output "deployment_summary" {
   description = "Summary of the deployed environment and module versions"
   value = {
@@ -8,4 +9,4 @@ output "deployment_summary" {
     }
   }
 }
-
+*/
