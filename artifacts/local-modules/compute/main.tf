@@ -1,10 +1,18 @@
+resource "terraform_data" "module_version" {
+  input = {
+    module  = "compute"
+    version = "Unversioned"
+    change  = "Initial compute module release"
+  }
+}
+
 data "aws_ami" "amazon_linux" {
   most_recent = true
   owners      = ["amazon"]
 
   filter {
     name   = "name"
-    values = ["al2023-ami-*-x86_64"]
+    values = ["al2023-ami-2023*-x86_64"]
   }
 }
 
@@ -23,4 +31,9 @@ resource "aws_instance" "web" {
   tags = merge(local.mod_tags, {
     Name = "${var.prefix}-${each.key}"
   })
+
+  lifecycle {
+    ignore_changes = [tags]
+  }
+
 }
