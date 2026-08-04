@@ -115,7 +115,7 @@ resource "aws_instance" "web" {
   })
 
   lifecycle {
-  ignore_changes = [tags]
+    ignore_changes = [tags]
   }
 }
 

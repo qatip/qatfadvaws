@@ -66,7 +66,4 @@ instances = {
   web01 = {
     instance_type = "t3.micro"
   }
-  web02 = {
-    instance_type = "t3.micro"
-  }
 }
