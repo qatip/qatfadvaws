@@ -104,6 +104,10 @@ resource "aws_instance" "web" {
   ami           = data.aws_ami.amazon_linux.id
   instance_type = each.value.instance_type
 
+  credit_specification {
+    cpu_credits = "standard"
+  }
+
   subnet_id = aws_subnet.subnet["app"].id
 
   vpc_security_group_ids = [

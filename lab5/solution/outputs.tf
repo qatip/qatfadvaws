@@ -8,4 +8,3 @@ output "deployment_summary" {
     }
   }
 }
-

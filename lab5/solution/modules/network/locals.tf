@@ -1,4 +1,5 @@
 locals {
+
   allow_groups_clean = {
     for group_name, cidrs in var.allow_groups :
     join("-", regexall("[a-z0-9]+", lower(trimspace(group_name)))) => distinct([
@@ -145,10 +146,5 @@ locals {
     for subnet_name, cidr in var.subnet_cidrs :
     trimspace(subnet_name) => trimspace(cidr)
   }
-
-  mod_tags = merge(
-    var.base_tags,
-    {}
-  )
 
 }

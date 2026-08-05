@@ -2,6 +2,7 @@ variable "prefix" {}
 variable "base_tags" {}
 variable "subnet_id" {}
 variable "security_group_id" {}
+#variable "instances" {}
 
 variable "instances" {
   description = "Map of EC2 instances to create."

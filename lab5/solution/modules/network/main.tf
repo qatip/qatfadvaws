@@ -11,7 +11,7 @@ resource "aws_vpc" "main" {
   enable_dns_support   = true
   enable_dns_hostnames = true
 
-  tags = merge(local.mod_tags, {
+  tags = merge(var.base_tags, {
     Name = "${var.prefix}-vpc"
   })
 }
@@ -43,7 +43,7 @@ resource "aws_security_group" "main" {
     }
   }
 
-  tags = merge(local.mod_tags, {
+  tags = merge(var.base_tags, {
     Name = "${var.prefix}-sg"
   })
 }
@@ -84,7 +84,7 @@ resource "aws_subnet" "subnet" {
 resource "aws_route_table" "main" {
   vpc_id = aws_vpc.main.id
 
-  tags = merge(local.mod_tags, {
+  tags = merge(var.base_tags, {
     Name = "${var.prefix}-rt"
   })
 }

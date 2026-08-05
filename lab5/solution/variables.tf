@@ -27,6 +27,7 @@ variable "region" {
 
 variable "allow_groups" {
   type = map(list(string))
+
 }
 
 variable "security_group_rules" {

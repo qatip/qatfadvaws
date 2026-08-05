@@ -9,7 +9,7 @@ terraform {
   }
 
   backend "s3" {
-    bucket       = "CHANGE ME"
+    bucket       = "qatipadvaws-tfstate-{change-me}"
     key          = "default.tfstate"
     region       = "us-west-2"
     encrypt      = true
@@ -21,4 +21,3 @@ terraform {
 provider "aws" {
   region = var.region
 }
-

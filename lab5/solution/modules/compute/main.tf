@@ -6,6 +6,7 @@ resource "terraform_data" "module_version" {
   }
 }
 
+
 data "aws_ami" "amazon_linux" {
   most_recent = true
   owners      = ["amazon"]
@@ -28,11 +29,9 @@ resource "aws_instance" "web" {
 
   subnet_id = var.subnet_id
 
-  vpc_security_group_ids = [
-    var.security_group_id
-  ]
+  vpc_security_group_ids = [var.security_group_id]
 
-  tags = merge(local.mod_tags, {
+  tags = merge(var.base_tags, {
     Name = "${var.prefix}-${each.key}"
   })
 
@@ -40,4 +39,3 @@ resource "aws_instance" "web" {
     ignore_changes = [tags]
   }
 }
-

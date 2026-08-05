@@ -1,5 +1,3 @@
-# Lab 3 Starting Point - based on Lab 2 Phase 4 Enforcement
-
 project_name = "Landing-Zone"
 env          = "PROD"
 region       = "us-west-2"

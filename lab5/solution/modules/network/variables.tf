@@ -1,6 +1,10 @@
 variable "prefix" {}
 variable "base_tags" {}
 variable "region" {}
+#variable "vpc_cidr" {}
+#variable "subnet_cidrs" {}
+#variable "allow_groups" {}
+#variable "security_group_rules" {}
 
 variable "allow_groups" {
   type = map(list(string))
