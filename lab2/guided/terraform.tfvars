@@ -1,4 +1,4 @@
-# Phase 4 - Enforcement
+# Phase 0 - Chaos
 
 project_name = "Landing-Zone"
 env          = "DEV"
@@ -39,7 +39,7 @@ security_group_rules = {
     protocol          = "Tcp"
     destination_ports = ["443"]
     source_cidrs      = ["10.0.10.0/24", "10.0.10.0/24"]
-    allow_groups      = ["internal_networks", "partner_network"]
+    allow_groups      = ["internal_networks", "partner_networks"]
     description       = "Allow-HTTPS-to-Office"
   }
 
