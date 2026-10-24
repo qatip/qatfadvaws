@@ -1,4 +1,4 @@
-aws_region   = "us-west-2"
+aws_region   = "eu-west-2"
 project_name = "advtf"
 environment  = "dev"
 vpc_cidr     = "10.0.0.0/16"
@@ -17,4 +17,4 @@ security_groups = ["web", "app"]
 #security_groups = {"web"="Web SG","app"="App SG"}
 #security_groups = {"web"="Web SG","db"="Database SG","app"="App SG"}
 #security_groups = { db = "Database SG", app = "App SG", web = "Web SG" }
-#security_groups = {}
+
