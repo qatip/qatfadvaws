@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop"
 
 function Get-LabRoot {
-    return "C:\qatfadvaws-local"
+    return "C:\qatfadvaws"
 }
 
 function Get-EnvPath {

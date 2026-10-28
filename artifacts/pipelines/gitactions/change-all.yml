@@ -82,6 +82,43 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
+      - name: Inspect OIDC Claims
+        shell: bash
+        run: |
+          python3 - <<'PYTHON'
+          import base64
+          import json
+          import os
+          from urllib.error import HTTPError, URLError
+          from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+          from urllib.request import Request, urlopen
+          
+          # Request the same audience used by the AWS credentials action.
+          parts = urlsplit(os.environ["ACTIONS_ID_TOKEN_REQUEST_URL"])
+          query = dict(parse_qsl(parts.query, keep_blank_values=True))
+          query["audience"] = "sts.amazonaws.com"
+          url = urlunsplit(parts._replace(query=urlencode(query)))
+          request = Request(url, headers={
+              "Authorization": "Bearer " + os.environ["ACTIONS_ID_TOKEN_REQUEST_TOKEN"]
+          })
+          try:
+              with urlopen(request, timeout=30) as response:
+                  token = json.load(response)["value"]
+          except (HTTPError, URLError):
+              raise SystemExit("Could not request the GitHub OIDC token.") from None
+          
+          # Decode for inspection only; AWS validates the signature when assuming the role.
+          # Keep the complete token and request credentials out of the log.
+          payload = token.split(".")[1]
+          payload += "=" * (-len(payload) % 4)
+          claims = json.loads(base64.urlsafe_b64decode(payload))
+          fields = (
+              "iss", "aud", "sub", "repository", "repository_id",
+              "repository_owner", "repository_owner_id", "environment", "ref"
+          )
+          print(json.dumps({key: claims.get(key) for key in fields}, indent=2))
+          PYTHON
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -113,6 +150,43 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
+      - name: Inspect OIDC Claims
+        shell: bash
+        run: |
+          python3 - <<'PYTHON'
+          import base64
+          import json
+          import os
+          from urllib.error import HTTPError, URLError
+          from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+          from urllib.request import Request, urlopen
+          
+          # Request the same audience used by the AWS credentials action.
+          parts = urlsplit(os.environ["ACTIONS_ID_TOKEN_REQUEST_URL"])
+          query = dict(parse_qsl(parts.query, keep_blank_values=True))
+          query["audience"] = "sts.amazonaws.com"
+          url = urlunsplit(parts._replace(query=urlencode(query)))
+          request = Request(url, headers={
+              "Authorization": "Bearer " + os.environ["ACTIONS_ID_TOKEN_REQUEST_TOKEN"]
+          })
+          try:
+              with urlopen(request, timeout=30) as response:
+                  token = json.load(response)["value"]
+          except (HTTPError, URLError):
+              raise SystemExit("Could not request the GitHub OIDC token.") from None
+          
+          # Decode for inspection only; AWS validates the signature when assuming the role.
+          # Keep the complete token and request credentials out of the log.
+          payload = token.split(".")[1]
+          payload += "=" * (-len(payload) % 4)
+          claims = json.loads(base64.urlsafe_b64decode(payload))
+          fields = (
+              "iss", "aud", "sub", "repository", "repository_id",
+              "repository_owner", "repository_owner_id", "environment", "ref"
+          )
+          print(json.dumps({key: claims.get(key) for key in fields}, indent=2))
+          PYTHON
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -143,6 +217,43 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
+
+      - name: Inspect OIDC Claims
+        shell: bash
+        run: |
+          python3 - <<'PYTHON'
+          import base64
+          import json
+          import os
+          from urllib.error import HTTPError, URLError
+          from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+          from urllib.request import Request, urlopen
+          
+          # Request the same audience used by the AWS credentials action.
+          parts = urlsplit(os.environ["ACTIONS_ID_TOKEN_REQUEST_URL"])
+          query = dict(parse_qsl(parts.query, keep_blank_values=True))
+          query["audience"] = "sts.amazonaws.com"
+          url = urlunsplit(parts._replace(query=urlencode(query)))
+          request = Request(url, headers={
+              "Authorization": "Bearer " + os.environ["ACTIONS_ID_TOKEN_REQUEST_TOKEN"]
+          })
+          try:
+              with urlopen(request, timeout=30) as response:
+                  token = json.load(response)["value"]
+          except (HTTPError, URLError):
+              raise SystemExit("Could not request the GitHub OIDC token.") from None
+          
+          # Decode for inspection only; AWS validates the signature when assuming the role.
+          # Keep the complete token and request credentials out of the log.
+          payload = token.split(".")[1]
+          payload += "=" * (-len(payload) % 4)
+          claims = json.loads(base64.urlsafe_b64decode(payload))
+          fields = (
+              "iss", "aud", "sub", "repository", "repository_id",
+              "repository_owner", "repository_owner_id", "environment", "ref"
+          )
+          print(json.dumps({key: claims.get(key) for key in fields}, indent=2))
+          PYTHON
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
