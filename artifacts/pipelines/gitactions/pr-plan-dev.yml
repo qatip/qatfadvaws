@@ -30,15 +30,12 @@
 # Workflow name as shown on the GitHub Actions tab.
 name: pr-plan-dev
 
-# Trigger: run when a pull request targets main AND changes this environment folder.
-# This lets reviewers inspect the plan before the change is merged.
-# Path scoping is deliberate: a DEV PR should not run TEST or PROD planning.
+# Required-check compatible: run on every PR targeting main.
+# The job itself detects relevant environment changes before AWS/Terraform steps.
 on:
   pull_request:
     branches:
       - main
-    paths:
-      - 'envs/dev/**'
 
 # Permissions required by the workflow.
 # id-token: write allows GitHub OIDC to request short-lived AWS credentials.
@@ -56,7 +53,7 @@ permissions:
 #   3 = Enable ownership governance in later labs.
 # ENV_DIR, STATE_KEY and VAR_FILE keep this workflow locked to DEV.
 env:
-  FEATURE_PHASE: "1"  # 1=No governance, 2=Intent governance, 3=Intent + Ownership
+  FEATURE_PHASE: "3"  # 1=No governance, 2=Intent governance, 3=Intent + Ownership
   ENV_DIR: "envs/dev"
   EXPECTED_ENV: "dev"
   PROMOTION_TFVARS: "envs/dev/dev-promotion.tfvars"
@@ -82,9 +79,31 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Always report this job's status, even for unrelated environment changes.
+      # Compare the full PR against its target branch, not just the latest commit.
+      - name: Detect DEV changes
+        id: scope
+        shell: pwsh
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          $ErrorActionPreference = "Stop"
+          $changed = @(git diff --name-only $env:PR_BASE_SHA $env:PR_HEAD_SHA -- 'envs/dev/')
+          if ($LASTEXITCODE -ne 0) { throw "Unable to determine PR changes." }
+          $relevant = if ($changed.Count -gt 0) { 'true' } else { 'false' }
+          "relevant=$relevant" >> $env:GITHUB_OUTPUT
+          if ($relevant -eq 'true') {
+            Write-Host "DEV changes detected; running governance and Terraform plan."
+            $changed | ForEach-Object { Write-Host " - $_" }
+          } else {
+            Write-Host "No DEV changes in this PR. Required check passes without Terraform."
+          }
+
       # Exchange the GitHub OIDC token for short-lived AWS credentials.
       # This avoids storing AWS access keys in GitHub.
       - name: Configure AWS credentials
+        if: steps.scope.outputs.relevant == 'true'
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
@@ -92,9 +111,11 @@ jobs:
 
       # Install Terraform on the GitHub-hosted runner.
       - name: Setup Terraform
+        if: steps.scope.outputs.relevant == 'true'
         uses: hashicorp/setup-terraform@v3
 
       - name: Governance gate + Terraform plan (dev)
+        if: steps.scope.outputs.relevant == 'true'
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
