@@ -66,7 +66,9 @@ In production projects, tfvars files are often owned or populated by another tea
     - observe how Terraform behaves with untidy input
     - see how that input is expanded into multiple AWS resources
     - identify where errors occur and where they do not
-    The goal is not to permanently fix anything yet. The goal is to observe and understand behaviour.
+    The goal is not to permanently fix anything yet. 
+    
+    The goal is to observe and understand behaviour.
 
     **Why is the data chaotic ?**
 
@@ -206,7 +208,8 @@ Phase 1 is about:
 - separating transformation from resource declaration
 - making the rule-building pipeline visible
 - keeping the original input intact
-It is not yet about:
+
+Phase 1 is not about:
 - trimming whitespace
 - lowercasing values
 - removing duplicates
