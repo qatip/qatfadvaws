@@ -1,6 +1,12 @@
-# Advanced Terraform on AWS Lab 1
+# Advanced Terraform on AWS Lab 1 
 
-**Churn**
+### Churn ###
+
+Last reviewed and tested - 27/11/26 13:00
+
+Contact - mcgreen@qa.com
+
+
 
 ## Expected Duration
 
@@ -36,9 +42,15 @@ The goal is not simply to reach a clean end state, but to understand why that en
 
     `main.tf`, `variables.tf`, `outputs.tf`, and `terraform.tfvars`.
 
+
 2. Open a terminal in this directory.
 
-    This will be your working directory and root module for the lab. Make all changes in this directory only. Directory `c:\qatfadvaws\lab1\original` contains a copy of the files used in this lab and are for reference\reset purposes if needed.
+    This will be your working directory and root module for the lab. Make all changes in this directory only. Directory `c:\qatfadvaws\lab1\original` contains a copy of the files used in this lab and are for reference\reset purposes if needed.y
+
+    ```powershell
+    cd c:\qatfadvaws\lab1\guided
+    ```
+
 
 ## Phase 1 – Initial deployment
 
@@ -96,7 +108,7 @@ The goal is not simply to reach a clean end state, but to understand why that en
     aws_subnet.demo
     aws_security_group.demo[0]
     aws_security_group.demo[1]
-    ```
+  
 
     ```powershell
     terraform state show aws_security_group.demo[0]
@@ -106,19 +118,15 @@ The goal is not simply to reach a clean end state, but to understand why that en
 
     The state resource address is `aws_security_group.demo[0]`. That means Terraform is currently identifying the resource by list position, not by its logical meaning. Notice that the security group name is derived from the list index (0) and the Name tag is derived from the value at that index position (web)…
 
-6. Verify the new resources in the AWS portal (sort by “Security group name column for
+6. Verify the new resources in the AWS portal (sort by “Security group name column for clarity)…
 
-    clarity)…
-
-    Important: In AWS, the ‘Name’ of a security group is an optional tag and is mutable, whereas the ‘Security group name’ is mandatory and immutable.
+    `Important`: In AWS, the ‘Name’ of a security group is an optional tag and is mutable, whereas the ‘Security group name’ is mandatory and immutable.
 
 ## Phase 2 – Configuration churn due to mutable attribute change
 
 ### Ordinal stability
 
-7. In `terraform.tfvars`, comment line 10 and uncomment line 11 so that db is added at
-
-    the end of the list.
+7. In `terraform.tfvars`, comment line 10 and uncomment line 11 so that `db` is added at the end of the list.
 
 8. Plan the changes:
 
@@ -140,13 +148,9 @@ The goal is not simply to reach a clean end state, but to understand why that en
 
 ### Ordinal instability
 
-11. In `terraform.tfvars`, comment line 11 and uncomment line 12 so that admin is
+11. In `terraform.tfvars`, comment line `11` and uncomment line `12` so that `admin` is inserted at the start of the list.
 
-    inserted at the start of the list.
-
-12. Before running Terraform, stop and consider what you expect to happen. You have
-
-    added one new security group name, but you have inserted it at the start rather than the end.
+12. Before running Terraform, stop and consider what you expect to happen. You have added one new security group name, but you have inserted it at the start rather than the end.
 
 13. Plan the changes:
 
@@ -154,13 +158,21 @@ The goal is not simply to reach a clean end state, but to understand why that en
     terraform plan
     ```
 
-    Review the plan carefully, is should show 1 to add, 3 to change, 0 to destroy. Terraform is still using `count`, so the resources are still addressed as [0], [1], [2] and now [3]. However, the values attached to those positions have shifted. That means: demo[0] (advtf-dev-secgp-0) Name advtf-dev-secgp-web changes to advtf-dev-secgp-admin
+    Review the plan carefully, it should show 1 to add, 3 to change, 0 to destroy. 
+    
+    Terraform is still using `count`, so the resources are still addressed as [0], [1], [2] and now [3]. 
+    
+    However, the values attached to those positions have shifted. 
+    
+    That means: 
+    
+    `demo[0] (advtf-dev-secgp-0)` Name `was` advtf-dev-secgp-web, now changes to advtf-dev-secgp-admin
+    
+    `demo[1] (advtf-dev-secgp-1)` Name `was` advtf-dev-secgp-app, now changes to advtf-dev-secgp-web
 
-    demo[1] (advtf-dev-secgp-1) Name advtf-dev-secgp-app changes to advtf-dev-secgp-web
+    `demo[2] (advtf-dev-secgp-2)` Name `was` advtf-dev-secgp-db, now changes to advtf-dev-secgp-app
 
-    demo[2] (advtf-dev-secgp-2) Name advtf-dev-secgp-db changes to advtf-dev-secgp-app
-
-    demo[3] (advtf-dev-secgp-3) is created with Name advtf-dev-secgp-db
+    `demo[3] (advtf-dev-secgp-3)` is newly created with Name advtf-dev-secgp-db
 
 14. Apply the changes:
 
@@ -168,11 +180,11 @@ The goal is not simply to reach a clean end state, but to understand why that en
     terraform apply --auto-approve
     ```
 
-15. Verify the updated resource in the AWS portal …
+15. Verify the updated resource in the AWS portal.
 
-16. In `terraform.tfvars`, comment line 12 and uncomment line 13 so that web is
+16. In `terraform.tfvars`, comment line 12 and uncomment line 13 so that web is removed from the list. 
 
-    removed from the list. Before running Terraform, stop and consider what you expect to happen. The Name attribute for security groups [1] and [2] have changed and security group [3] is no longer needed. The mutable attribute changes will therefore triggers change actions for security groups [1] and [2] along with the destruction of security group [3].
+Before running Terraform, stop and consider what you expect to happen. The Name attribute for security groups [1] and [2] have changed and security group [3] is no longer needed. The mutable attribute changes will therefore triggers change actions for security groups [1] and [2] along with the destruction of security group [3].
 
 17. Plan the changes:
 
@@ -180,7 +192,19 @@ The goal is not simply to reach a clean end state, but to understand why that en
     terraform plan
     ```
 
-    Review the plan carefully, it should show 0 to add, 2 to change, 1 to destroy. Terraform is still using `count`, so the resources are still addressed as [0], [1], [2] and so on. However, the values attached to those positions have shifted. That means: demo[0] (advtf-dev-secgp-0) advtf-dev-secgp-admin remains unchanged demo[1] (advtf-dev-secgp-1) advtf-dev-secgp-web > advtf-dev-secgp-app demo[2] (advtf-dev-secgp-2) advtf-dev-secgp-app > advtf-dev-secgp-db demo[3] (advtf-dev-secgp-3) is destroyed
+    Review the plan carefully, it should show 0 to add, 2 to change, 1 to destroy. Terraform is still using `count`, so the resources are still addressed as [0], [1], [2] and so on. 
+    
+    However, the values attached to those positions have shifted. 
+    
+    That means: 
+    
+    demo[0] (advtf-dev-secgp-0) advtf-dev-secgp-admin remains `unchanged`
+    
+    demo[1] (advtf-dev-secgp-1) advtf-dev-secgp-web `>` advtf-dev-secgp-app 
+    
+    demo[2] (advtf-dev-secgp-2) advtf-dev-secgp-app `>` advtf-dev-secgp-db 
+    
+    demo[3] (advtf-dev-secgp-3) is `destroyed`
 
 18. Apply the changes:
 
@@ -192,7 +216,7 @@ The goal is not simply to reach a clean end state, but to understand why that en
 
     What this demonstrates: What looks like a small logical change can produce a much larger operational effect. A simple ordered list is fragile. Even when your intent is small, ordinal indexing can cause widespread change because resource configuration is tied to position.
 
-20. In `terraform.tfvars`, comment line 13 and uncomment line 14 so the list is empty.
+20. In `terraform.tfvars`, comment line `13` and uncomment line `14` so the list is empty.
 
     This will remove all existing security groups ahead of the next phase.
 
@@ -204,13 +228,9 @@ The goal is not simply to reach a clean end state, but to understand why that en
 
 ## Phase 3 – Identity churn due to immutable attribute change
 
-22. In `main.tf`, comment line 46 and uncomment line 47. This binds the ‘Security group
+22. In `main.tf`, comment line `46` and uncomment line `47`. This binds the ‘Security group name’ to be given to the security group to the explicit positional value in the `security_groups` variables. A positional change will invoke a ‘Security group name’ change, an immutable attribute in AWS.
 
-    name’ to be given to the security group to the explicit positional value in the `security_groups` variables. A positional change will invoke a ‘Security group name’ change, an immutable attribute in AWS.
-
-23. In `terraform.tfvars`, comment line 14 and uncomment line 10. This adds 2
-
-    elements to the `security_groups` list.
+23. In `terraform.tfvars`, comment line '14' and uncomment line '10'. This adds 2 elements to the `security_groups` list.
 
 24. Plan the changes:
 
@@ -238,9 +258,7 @@ The goal is not simply to reach a clean end state, but to understand why that en
 
 25. Verify the new resources in the AWS portal …
 
-26. In `terraform.tfvars`, comment line 10 and uncomment line 11 so that db is added at
-
-    the end of the list.
+26. In `terraform.tfvars`, comment line `10` and uncomment line `11` so that `db` is added at the end of the list.
 
 27. Plan the changes:
 
@@ -258,13 +276,9 @@ The goal is not simply to reach a clean end state, but to understand why that en
 
 29. Verify the updated resources in the AWS portal …
 
-30. As before, when using `count`, adding items to the end of a list usually produces
+30. As before, when using `count`, adding items to the end of a list usually produces stable behaviour. Terraform adds the new resource and leaves the existing indexed resources untouched.
 
-    stable behaviour. Terraform adds the new resource and leaves the existing indexed resources untouched.
-
-31. In `terraform.tfvars`, comment line 11 and uncomment line 12 so that admin is
-
-    inserted at the start of the list.
+31. In `terraform.tfvars`, comment line `11` and uncomment line `12` so that `admin` is inserted at the start of the list.
 
 32. Plan the changes:
 
@@ -274,7 +288,7 @@ The goal is not simply to reach a clean end state, but to understand why that en
 
     Review the plan carefully, it should show 4 to add, 0 to change, 3 to destroy.
 
-    The ‘Security group name’ used for the security groups [0],[1] and [2] has now changed. This is an immutable attribute and therefore triggers destroy/add actions along with the creation of security group [3].
+    The ‘Security group name’ used for the security groups [0],[1] and [2] has now changed. This is an `immutable` attribute and therefore triggers destroy/add actions along with the creation of security group [3].
 
 33. Apply the changes serially to avoid racing:
 
@@ -282,13 +296,11 @@ The goal is not simply to reach a clean end state, but to understand why that en
     terraform apply --parallelism=1 --auto-approve
     ```
 
-34. Verify the new resources in the AWS portal …
+34. Verify the new resources in the AWS portal … Note the new Security group IDs !
 
-    Note the new Security group IDs !
+35. In `terraform.tfvars`, comment line 12 and uncomment line 13 so that web is removed from the list. 
 
-35. In `terraform.tfvars`, comment line 12 and uncomment line 13 so that web is
-
-    removed from the list. Before running Terraform, stop and consider what you expect to happen. The ‘Security group name’ used for the security groups [1] and [2] have changed and security group [3] is no longer needed. The immutable attribute changes will therefore triggers destroy/add actions for security groups [1] and [2] along with the destruction of security group [3].
+Before running Terraform, stop and consider what you expect to happen. The ‘Security group name’ used for the security groups [1] and [2] have changed and security group [3] is no longer needed. The immutable attribute changes will therefore triggers destroy/add actions for security groups [1] and [2] along with the destruction of security group [3].
 
 36. Plan and then apply the changes:
 
@@ -302,9 +314,7 @@ The goal is not simply to reach a clean end state, but to understand why that en
     terraform apply --auto-approve
     ```
 
-37. Verify the new resources in the AWS portal …
-
-    Note the new IDs for advtf-dev-secgp-db and advtf-dev-secgp-app !
+37. Verify the new resources in the AWS portal … Note the new IDs for `advtf-dev-secgp-db` and `advtf-dev-secgp-app` !
 
 38. In `terraform.tfvars`, comment line 13 and uncomment line 14 so the list is empty.
 
@@ -326,7 +336,9 @@ Up to this point, resources have been created using `count`, which means Terrafo
 
 - The resource moves from using `count` to using `for_each`
 
-This introduces a fundamental shift in how Terraform tracks resources. Terraform does not understand what a resource means — only how it is addressed Instead of:
+This introduces a fundamental shift in how Terraform tracks resources. Terraform does not understand what a resource means — only how it is addressed 
+
+Instead of:
 
 - `aws_security_group.demo[0]`
 
@@ -348,21 +360,13 @@ Resources will no longer be identified by position, but by stable keys. This mea
 
 This is the key step that removes the instability seen in earlier phases and leads to a more predictable and maintainable design
 
-40. In `variables.tf`, comment line 27 and uncomment lines 30. This re-types the
+40. In `variables.tf`, comment line `27` and uncomment lines `30`. This re-types the variable `security_groups` from `list(string)` to `map(string)`.
 
-    variable `security_groups` from `list(string)` to `map(string)`.
+41. In `main.tf`, uncomment lines `42` and `58`, and comment lines `60` and `77`. This switches to a resource block using a `for_each` construct that references the re-typed `security_groups` variables.
 
-41. In `main.tf`, uncomment lines 42 and 58, and comment lines 60 and 77. This
+42. In `terraform.tfvars`, comment line 14 and uncomment line 17. This populates the re-typed `security_groups` variable with initial values.
 
-    switches to a resource block using a `for_each` construct that references the re-typed `security_groups` variables.
-
-42. In `terraform.tfvars`, comment line 14 and uncomment line 17. This populates the
-
-    re-typed `security_groups` variable with initial values.
-
-43. Before running Terraform, consider what is about to change. The resources will no
-
-    longer be addressed by numeric index.
+43. Before running Terraform, consider what is about to change. The resources will no longer be addressed by numeric index.
 
 44. Plan the changes:
 
@@ -404,9 +408,7 @@ This is the key step that removes the instability seen in earlier phases and lea
 
 ### Proving the stable design
 
-47. In `terraform.tfvars`, comment line 17 and uncomment line 18 so that db is inserted
-
-    between web and app.
+47. In `terraform.tfvars`, comment line 17 and uncomment line 18 so that `db` is inserted between `web` and `app`.
 
 48. Plan the changes:
 
@@ -420,9 +422,7 @@ This is the key step that removes the instability seen in earlier phases and lea
     terraform apply --auto-approve
     ```
 
-49. In `terraform.tfvars`, comment line 18 and uncomment lines 19. This re-orders the
-
-    values for the `security_groups` variable.
+49. In `terraform.tfvars`, comment line 18 and uncomment lines 19. This re-orders the values for the `security_groups` variable.
 
 50. Plan the changes:
 
@@ -430,7 +430,13 @@ This is the key step that removes the instability seen in earlier phases and lea
     terraform plan
     ```
 
-    The plan should show no changes. Why? Because although the order of the entries in the list has changed, the keys have not. Terraform is using those keys for identity, so reordering the map does not cause churn. This is the stable end state the lab is designed to lead you toward. The map provides explicit keys, and `for_each` uses those keys to maintain stable addressing in state. This pattern is known as key-based resource addressing. Best-practice conclusion: For long-lived infrastructure, prefer `for_each` with stable map keys and explicit structured values. Use simple ordered lists with care, because ordinal indexing is fragile.
+    The plan should show no changes. Why? Because although the order of the entries in the list has changed, the keys have not. Terraform is using those keys for identity, so reordering the map does not cause churn. 
+    
+    This is the stable end state the lab is designed to lead you toward. The map provides explicit keys, and `for_each` uses those keys to maintain stable addressing in state. 
+    
+    This pattern is known as key-based resource addressing. 
+    
+    Best-practice conclusion: For long-lived infrastructure, prefer `for_each` with stable map keys and explicit structured values. Use simple ordered lists with care, because ordinal indexing is fragile.
 
 ## Phase 5 – Clean up
 
@@ -442,7 +448,11 @@ This is the key step that removes the instability seen in earlier phases and lea
 
 ## Transition to Lab 2 – From Stable Identity to Rich Data
 
-In this lab, the focus has been on understanding how Terraform tracks resources and how input data structures influence stability over time. To keep that focus clear, we deliberately used a simple data structure: `map(string)` This allowed us to concentrate on resource identity and churn, without introducing additional complexity. In real-world configurations, however, a single string is rarely sufficient to describe a resource. Infrastructure definitions typically require multiple attributes, such as naming conventions, environment context, tagging strategies, and configuration options. To support this, Terraform commonly uses more expressive data structures such as
+In this lab, the focus has been on understanding how Terraform tracks resources and how input data structures influence stability over time. To keep that focus clear, we deliberately used a simple data structure: `map(string)` This allowed us to concentrate on resource identity and churn, without introducing additional complexity. 
+
+In real-world configurations, however, a single string is rarely sufficient to describe a resource. Infrastructure definitions typically require multiple attributes, such as naming conventions, environment context, tagging strategies, and configuration options. 
+
+To support this, Terraform commonly uses more expressive data structures such as
 
 ```text
 map(object)
@@ -476,6 +486,3 @@ The focus now shifts from: “How does Terraform track resources?” to: “How 
 
 © 2026 QA Michael Coulling-Green. All rights reserved. These lab materials are provided as part of an authorised training course. Course attendees may reuse these materials for their own personal learning and reference outside of the training session. Unauthorised copying, redistribution, publication, or use of these materials to deliver training is prohibited without prior written permission from the author.
 
----
-
-Version 1.1 | 24/10/26 | mcgreen@qa.com
