@@ -2,7 +2,10 @@
 
 ## Dynamic Resource Creation and Deterministic Design — Guided
 
-Version 1.0.1 | 29/06/26 | mcgreen@qa.com
+Last reviewed and tested - 27/11/26 19:00
+
+Contact - mcgreen@qa.com
+
 
 ## Expected Duration
 
@@ -58,11 +61,8 @@ You will correct this by restructuring the input model
 
    ```text
    aws_route_table.main
-   ```
-
-   aws_route_table_association.app aws_route_table_association.data
-
-   ```text
+   aws_route_table_association.app 
+   aws_route_table_association.data
    aws_subnet.app
    aws_subnet.data
    ```
@@ -91,6 +91,7 @@ Whilst deploying correctly, the current implementation relies on separate variab
 - A new variable
 - Additional Terraform code
 - Additional route table association code
+
 In this stage, the goal is to improve the structure of the input data before changing the subnet resources themselves by moving from standalone subnet variables to a single structured subnet map. You are not yet refactoring the subnet resources into a dynamic `for_each` design, at this stage, the focus is purely on improving the shape of the input model.
 
 ### Replace the Existing Subnet Variables
@@ -350,6 +351,7 @@ This means that:
 - adding a new subnet still requires additional association code
 - the subnet configuration and association configuration are no longer aligned
 - the configuration is only partially dynamic
+
 In this phase, you will refactor the route table associations, so they are also created dynamically. You are moving from manual association resources to dynamic association resources. This is an important Terraform design pattern: Dependent resources should often scale automatically from the resources they depend on.
 
 ### Refactor the Route Table Associations
@@ -410,7 +412,9 @@ aws_route_table_association.subnet["app"] and:
 aws_subnet.subnet["data"]
 ```
 
-aws_route_table_association.subnet["data"] The subnet map keys are now controlling:
+aws_route_table_association.subnet["data"] 
+
+The subnet map keys are now controlling:
 
 - subnet creation
 - dependent resource creation

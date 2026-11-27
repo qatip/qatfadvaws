@@ -2,7 +2,9 @@
 
 ## Dynamic Resource Creation and Deterministic Design — Challenge
 
-Version 1.0.1 | 29/06/26 | mcgreen@qa.com
+Last reviewed and tested - 27/11/26 19:00
+
+Contact - mcgreen@qa.com
 
 | Item | Details |
 |---|---|
@@ -65,11 +67,8 @@ You should see the existing Lab 2 resources (15) along with new networking resou
 
 ```text
 aws_route_table.main
-```
-
-aws_route_table_association.app aws_route_table_association.data
-
-```text
+aws_route_table_association.app
+aws_route_table_association.data
 aws_subnet.app
 aws_subnet.data
 ```
