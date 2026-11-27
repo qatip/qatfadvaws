@@ -11,11 +11,11 @@ In this lab, you will:
 
 ### Teaching Points
 
-This lab will configure your lab environment. The environment has a time limit of 36 hours after which it will be decommissioned. Use the **Pause** option at the end of each day's training to ensure that the environment remains consistent for the entire duration of the course. If the lab expires, ends or is restarted, you may have to perform steps previously completed before progressing further.
+This lab will configure your lab environment. The environment has a time limit of 4 days after which it will be decommissioned. If the lab expires, ends or is restarted, you may have to perform steps previously completed before progressing further.
 
 ### Before you begin
 
-These instructions assume you have accessed the QA Portal and have followed the instructions provided there. You should have your remote lab desktop available before proceeding.
+These instructions assume you have accessed the QA Portal and have followed the instructions provided there. You should have your remote lab desktop in front of you before proceeding.
 
 ## Task 1 — Set up your Lab environment
 
@@ -56,10 +56,10 @@ These instructions assume you have accessed the QA Portal and have followed the 
 
 11. In order to avoid the frustration of desktop clutter, it is suggested you arrange your desktop so that you can easily switch between:
 
-    - Your web browser, in which you can view your course manual, lab instructions, the AWS Console and any other web resources.
-    - The VSC interface, in which you will create and action Terraform files.
+    - Your web browser, in which you can view the AWS Console and any other web resources.
+    - The VSC interface, in which you can view lab instructions and create and action Terraform files.
 
-    You can view the lab instructions within VSC or through a browser, browsing to `C:\qatfadvaws\lab_instructions`.
+    You can view the lab instructions within VS in qatfadvaws\lab_instructions and selecting to Preview the appropriate MD file. Use 'Open to Side' to view files8 side-by-side.
 
 ---
 
