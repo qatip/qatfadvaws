@@ -1,5 +1,9 @@
 # Advanced Terraform on AWS — Lab 0
 
+Last reviewed and tested - 27/11/26 11:00
+
+Contact - mcgreen@qa.com
+
 ## Lab Setup
 
 ### Lab Objectives
@@ -59,18 +63,12 @@ These instructions assume you have accessed Platform.QA.COM and have followed th
     - Your web browser, in which you can view the AWS Console and any other web resources.
     - The VSC interface, in which you can view lab instructions and create and action Terraform files.
 
-    You can view the lab instructions within VS in qatfadvaws\lab_instructions and selecting to Preview the appropriate MD file. Use 'Open to Side' to view files8 side-by-side.
+    You can view the lab instructions within VSC at `qatfadvaws\lab_instructions` and selecting to `Open Preview` on the appropriate MD file. Use `Open to Side` to view additional files side-by-side.
 
 ---
 
-## Congratulations, you have completed this lab!
-
----
+### Congratulations, you have completed this lab!
 
 ## Copyright
 
 © 2026 QA Michael Coulling-Green. All rights reserved. These lab materials are provided as part of an authorised training course. Course attendees may reuse these materials for their own personal learning and reference outside of the training session. Unauthorised copying, redistribution, publication, or use of these materials to deliver training is prohibited without prior written permission from the author.
-
-**Version:** 1.0.0  
-**Date:** 28/06/26  
-**Contact:** mcgreen@qa.com
