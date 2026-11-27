@@ -2,6 +2,8 @@
 
 Last reviewed and tested - 27/11/26 11:00
 
+Instructions updated - 27/11/26 (VSC version check)
+
 Contact - mcgreen@qa.com
 
 ## Lab Setup
@@ -11,6 +13,7 @@ Contact - mcgreen@qa.com
 In this lab, you will:
 
 - Launch and configure Visual Studio Code (VSC) in your lab virtual machine ahead of running subsequent labs.
+- Verify that VSC supports copying commands directly from the Markdown preview, and update VSC if required.
 - Access AWS using provided credentials.
 
 ### Teaching Points
@@ -24,28 +27,68 @@ These instructions assume you have accessed Platform.QA.COM and have followed th
 ## Task 1 — Set up your Lab environment
 
 1. Open VSC from the taskbar.
-2. Verify that the **HashiCorp Terraform** and **VSCode-pdf** VSC extensions are installed.
-3. Verify `C:\qatfadvaws` has been added to Explorer.
+
+2. Open a PowerShell terminal in VSC and check the installed version:
+
+   ```powershell
+   code --version
+   ```
+
+   The first line of the output shows the installed version. **Version 1.132.0 or later is required** for the native Copy button in the Markdown preview.
+
+3. If your version is 1.132.0 or later, skip to step 5. Otherwise, update VSC as follows:
+
+   - Save any open files and **close all VSC windows**.
+   - From the Windows Start menu, open PowerShell using **Run as administrator**. Do not use the VSC integrated terminal for the upgrade.
+   - Run the following command:
+
+     ```powershell
+     winget upgrade --id Microsoft.VisualStudioCode --exact --accept-package-agreements --accept-source-agreements
+     ```
+
+   - Allow the installer to complete. A Windows reboot should not be required.
+
+   **Important:** If the upgrade fails or you cannot run PowerShell as Administrator, inform your instructor before proceeding.
+
+4. Reopen VSC from the taskbar and verify the installed version using:
+
+   ```powershell
+   code --version
+   ```
+
+   Confirm that the version is now 1.132.0 or later.
+
+5. Test the Markdown preview:
+
+   - Open `Lab0.md` from `C:\qatfadvaws\lab_instructions` in VSC.
+   - Press `Ctrl+Shift+V` to open the Markdown preview.
+   - Hover over the `code --version` code block above.
+   - Verify that the **Copy** button appears in the top-right corner of the code block. Click it to copy the command to the clipboard.
+
+   This feature will allow you to copy commands directly from the lab instructions into the VSC terminal throughout the course. If the button does not appear, inform your instructor.
+
+6. Verify that the **HashiCorp Terraform** and **VSCode-pdf** VSC extensions are installed.
+7. Verify `C:\qatfadvaws` has been added to Explorer.
 
    These class files are available at <https://github.com/qatip/qatfadvaws.git> for post-class use.
 
 ## Task 2 — Logging into AWS
 
-4. Open a new web browser tab and log in to the AWS Console using your provided lab credentials.
+8. Open a new web browser tab and log in to the AWS Console using your provided lab credentials.
 
    **Note:** This can be done from your local machine or on the remote desktop. The latter is recommended.
 
-5. When required to run Terraform commands from the VSC terminal, you will need to authenticate to AWS.
-6. Type the following command in a terminal session:
+9. When required to run Terraform commands from the VSC terminal, you will need to authenticate to AWS.
+10. Type the following command in a terminal session:
 
-   ```powershell
-   aws configure
-   ```
+    ```powershell
+    aws configure
+    ```
 
-7. Use the **AWS Access Key ID** and **AWS Secret Access Key** provided in the lab portal.
-8. Use **`us-west-2`** as your default region for this lab environment. If running these labs post-course, choose an appropriate region.
-9. Leave Default output format blank.
-10. These credentials are stored in `C:\Users\<username>\.aws`. You can re-run `aws configure` at any point to change these settings.
+11. Use the **AWS Access Key ID** and **AWS Secret Access Key** provided in the lab portal.
+12. Use **`us-west-2`** as your default region for this lab environment. If running these labs post-course, choose an appropriate region.
+13. Leave Default output format blank.
+14. These credentials are stored in `C:\Users\<username>\.aws`. You can re-run `aws configure` at any point to change these settings.
 
     The prompts will appear as follows (credential placeholders are illustrative):
 
@@ -58,7 +101,7 @@ These instructions assume you have accessed Platform.QA.COM and have followed th
 
 ## Task 3 — Arranging your remote desktop
 
-11. In order to avoid the frustration of desktop clutter, it is suggested you arrange your desktop so that you can easily switch between:
+15. In order to avoid the frustration of desktop clutter, it is suggested you arrange your desktop so that you can easily switch between:
 
     - Your web browser, in which you can view the AWS Console and any other web resources.
     - The VSC interface, in which you can view lab instructions and create and action Terraform files.
