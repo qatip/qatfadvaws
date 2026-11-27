@@ -15,7 +15,7 @@ This lab will configure your lab environment. The environment has a time limit o
 
 ### Before you begin
 
-These instructions assume you have accessed the QA Portal and have followed the instructions provided there. You should have your remote lab desktop in front of you before proceeding.
+These instructions assume you have accessed Platform.QA.COM and have followed the instructions provided there. You should have your remote lab desktop in front of you before proceeding.
 
 ## Task 1 — Set up your Lab environment
 
