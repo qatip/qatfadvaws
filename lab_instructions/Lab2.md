@@ -1,6 +1,9 @@
 # Advanced Terraform on AWS Lab 2
 
 ## Hygiene and Validation
+Last reviewed and tested - 27/11/26 16:30
+
+Contact - mcgreen@qa.com
 
 ## Expected Duration
 
@@ -21,9 +24,17 @@ By the end of this lab, you will be able to:
 
 The lab2 folder used for this lab contains two sub-directories; ‘guided’ and ‘phases’.
 
-All tasks are performed in the guided directory, where you have access to a script named ‘`phases.cmd`.’ Running this ‘Phase switcher’ script allows you to switch between lab phases, as outlined in the instructions which follow. Selecting a phase will copy new files into the guided folder, simulating progressive modifications to the original ‘chaotic’ files. The `providers.tf` file which exists in the guided folder initially will remain static throughout the lab...
+All tasks are performed in the guided directory, where you have access to a script named `phases.cmd`. Running this ‘Phase switcher’ script allows you to switch between lab phases, as outlined in the instructions which follow. Selecting a phase will copy new files into the `guided` folder, simulating progressive modifications to the original `chaotic` files. The `providers.tf` file which exists in the guided folder initially, will remain static throughout the lab.
 
-Important: Do not have any guided files active in VSC editor as you switch between phases. Doing so can cause ‘On-disk vs In-memory’ file version conflicts and may lead to ‘phantom’ error displays. If any of these appear then simply close and re-open VSC to clear them. All the supplied code has been extensively evaluated and works ‘as-is’ You can use the ‘compare’ feature in VSC to view the file differences as you move through this lab. Try this now; to compare `main.tf` changes from Phase 0 to Phase 1 .. In explorer, navigate to Phases/Phase0 and right click `main.tf` Select “Select for compare” Navigate to Phases/Phase1 and right-click `main.tf` Select “Compare with selected”
+`Important:` Do not have any guided files active in VSC editor as you switch between phases. Doing so can cause ‘On-disk vs In-memory’ file version conflicts and may lead to ‘phantom’ error displays. If any of these appear then simply close and re-open VSC to clear them. All the supplied code has been extensively evaluated and works ‘as-is’ 
+
+You can use the ‘compare’ feature in VSC to view the file differences as you move through this lab. 
+
+Try this now; to compare `main.tf` changes from Phase 0 to Phase 1
+
+In explorer, navigate to Phases/Phase0 and right click `main.tf` Select “Select for compare”
+
+Navigate to Phases/Phase1 and right-click `main.tf` Select “Compare with selected”
 
 ## Lab rules
 
@@ -39,7 +50,13 @@ In production projects, tfvars files are often owned or populated by another tea
 
     **Understanding the Starting Point**
 
-    The intent of this code is to create; A VPC named landing-zone-dev-vpc A Security Group named landing-zone-dev-sg Security Group ingress rules allow_http_to_office Security Group ingress rules allow_https_to_office Security Group egress rules allow_http_to_partner
+    The intent of this code is to create; 
+    
+    - VPC named `landing-zone-dev-vpc` 
+    - Security Group named `landing-zone-dev-sg` 
+    - Security Group ingress rules `allow_http_to_office` 
+    - Security Group ingress rules `allow_https_to_office` 
+    - Security Group egress rules `allow_http_to_partner`
 
     This lab does not start from a clean or well-structured configuration. Instead, it deliberately uses chaotic, inconsistent input data to simulate a more realistic scenario.
 
@@ -60,6 +77,8 @@ In production projects, tfvars files are often owned or populated by another tea
 
     - inconsistent rule names
     - repeated or overlapping values
+
+
     These issues are typical in environments where:
     - multiple teams contribute configuration
     - standards are not enforced
@@ -70,20 +89,30 @@ In production projects, tfvars files are often owned or populated by another tea
     Terraform will:
     - read the input variables
     - expand each logical rule into multiple effective rules
-    - attempt to build the final resource configuration At this stage, correctness is enforced by the AWS provider, not Terraform itself.
+    - attempt to build the final resource configuration
+    
+    At this stage, correctness is enforced by the AWS provider, not Terraform itself.
     Terraform evaluates and passes data, but does not guarantee that it is valid or safe.
 
     **Why might errors occur?**
 
-    Not all problems are treated the same. Some issues are rejected immediately AWS performs validation on certain inputs, particularly CIDR values. This means values such as:
+    Not all problems are treated the same. Some issues are rejected immediately 
+    
+    The AWS provider performs validation on certain inputs, particularly CIDR values. This means values such as:
     - " 10.0.1.0/24 " (whitespaces)
-    - "10.0.0.0/33" (invalid range) may cause errors during planning and apply.
+    - "10.0.0.0/33" (invalid range) 
+    
+    may cause errors during planning and apply.
     These errors occur because the provider expects a valid IPv4 network format.
 
-    Other issues are not rejected by Terraform Some values are technically valid, even if they are undesirable. These include:
+    Other issues are not rejected by Terraform 
+    
+    Some values are technically valid, even if they are undesirable. These include:
     - duplicate CIDRs
     - overlapping CIDRs
-    - inconsistent naming or casing Some will pass through Terraform and AWS without error, others will pass through Terraform only to be rejected by AWS.
+    - inconsistent naming or casing 
+    
+    Some will pass through Terraform and AWS without error, others will pass through Terraform only to be rejected by AWS.
 
     **What should you expect in this phase?**
 
@@ -98,8 +127,8 @@ In production projects, tfvars files are often owned or populated by another tea
 5. Plan this configuration…
 
     ```powershell
+    cd c:\qatfadvaws\lab2\guided
     terraform init
-
     terraform plan
     ```
 
@@ -145,7 +174,7 @@ In production projects, tfvars files are often owned or populated by another tea
     terraform apply --auto-approve
     ```
 
-13. This produces no errors, but the descriptions given to the ingress and egress rules are not standardized …
+13. This produces no errors, but the descriptions given to the ingress and egress rules are not standardized.
 
 14. A more insidious problem is the index ordinality being used in `main.tf` when provisioning the ingress and egress rule. To highlight this, add a second cidr “10.0.11.0/24” before the current cidr on line 41 of `terraform.tfvars`…
 
@@ -184,16 +213,19 @@ It is not yet about:
 - validating CIDRs
 - rejecting bad input
 
-1. Close any open files in VSC.
+1. Close any open files in VSC, except this one.
 
-2. Run the phase switcher and select Phase 1
+2. Run the phase switcher and select `Phase 1`
 
 3. A new file `locals.tf` is introduced whilst `main.tf` and `outputs.tf` are updated.
 
 4. Review `locals.tf` You will see a number of new local values being defined.
-    Environment locals
 
-    These locals can now be referenced by resource blocks rather than each resource block having to do the concatenation inline. Note that there is no sanitization of the raw variables as yet. This will come in Phase 2. Rules locals
+    **Environment locals**
+
+    These locals can now be referenced by resource blocks rather than each resource block having to do the concatenation inline. Note that there is no sanitization of the raw variables as yet. This will come in Phase 2. 
+    
+    **Rules locals**
 
     These locals remove the complexity of deriving the actual rules away from the resource blocks that will consume them, making the resource provisioning code simpler to understand and debug.
 
@@ -231,23 +263,19 @@ It is not yet about:
 
     - Repetitive resource naming will now be consistent
     - Tags will now be consistent across all resources
-    - The configuration is structurally improved The configuration is now structurally improved and easier to understand. However, the plan may still fail due to unresolved data quality issues. This is expected.
-    Why it might still fail:
-    - whitespace in CIDR values is still present
-    - duplicate values still exist
-    - invalid values are still passed to the provider
+    
+        The configuration is now structurally improved and easier to understand. However, the plan still fails due to unresolved data quality issues. This is expected.
+    
+        Why planning fails:
+        - whitespace in CIDR values is still present
+        - duplicate values still exist
+        - invalid values are still passed to the provider
 
 7. Terraform inspection:
-
     ```powershell
     terraform console
-
     local.prefix
-
     local.base_tags
-    ```
-
-    ```hcl
     local.raw_ingress_rules
     local.raw_egress_rules
     ```
@@ -260,11 +288,13 @@ It is not yet about:
 
     **Why this matters**
 
-    As you learnt in Lab1, index-based keys are fragile. As demonstrated in Phase 0, if a new CIDR is inserted earlier in the input, later indexes may change even though the actual rules have not changed. Terraform can then interpret the change as a destroy/recreate operation. Later in the lab, this is fixed by replacing index-based identity with meaning-based identity.
+    As you learnt in Lab1, index-based keys are fragile. As demonstrated in Phase 0, if a new CIDR is inserted earlier in the input, later indexes may change even though the actual rules have not changed. Terraform can then interpret the change as a destroy/recreate operation. 
+    
+    Later in the lab, this is fixed by replacing index-based identity with meaning-based identity.
 
-8. Key point: The configuration is better structured, but the data is still unreliable.
+`Key point`: The configuration is better structured, but the data is still unreliable.
 
-9. What comes next: Phase 2 will begin cleaning and normalizing the data.
+`What comes next`: Phase 2 will begin cleaning and normalizing the data.
 
 ## Phase 2 – Determinism
 
@@ -326,7 +356,7 @@ This is intentional. We are cleaning the data, not enforcing correctness.
 
 1. Ensure no files are open in the guided directory.
 
-2. Run the phase switcher and select Phase 2
+2. Run the phase switcher and select `Phase 2`
 
 3. Review `locals.tf`
     This file now performs all transformation logic.
@@ -337,16 +367,19 @@ This is intentional. We are cleaning the data, not enforcing correctness.
     - `env_canon`
     - `project_canon`
     - `prefix`
+    
     These locals:
     - remove whitespace
     - enforce lowercase
     - strip invalid characters
     - produce consistent naming
+    
     This ensures all resource names and tags are consistent and predictable
 
     **Allow group normalization**
 
     - `allow_groups_clean`
+    
     This local:
     - trims whitespace from CIDRs
     - removes blank values
@@ -356,6 +389,7 @@ This is intentional. We are cleaning the data, not enforcing correctness.
     **Rule normalization**
 
     - `security_group_rules_clean`
+    
     Each rule is cleaned by:
     - normalizing rule keys
     - converting type and protocol to lowercase
@@ -386,6 +420,7 @@ This is intentional. We are cleaning the data, not enforcing correctness.
 
     - `effective_ingress_rules`
     - `effective_egress_rules`
+    
     Each rule is expanded into:
     - protocol
     - port
@@ -393,13 +428,28 @@ This is intentional. We are cleaning the data, not enforcing correctness.
 
     **Critical change: Rule identity**
 
-    Phase 1 locals used: rule_key | port | index (This is the ordinality problem) Line 55 >>> "${item.rule_key}|${item.port}|${idx}" => item Phase 2 locals now uses: rule_key | protocol | port | cidr Line 146 >>> "${rule_key}|${rule.protocol}|${port}|${cidr}" This means rule identity is now based on what the rule is, not where it appears.
+    Phase 1 locals (lines 55 and 79) used: 
+    
+    rule_key | port | index 
+    
+    `${item.rule_key}|${item.port}|${idx}" => item`
+    
+    This was the ordinality problem.
+
+    Phase 2 locals (line 129 and 146) now uses: 
+    
+    rule_key | protocol | port | cidr 
+
+    `${rule_key}|${rule.protocol}|${port}|${cidr}` 
+    
+    This means rule identity is now based on what the rule is, not where it appears.
 
 4. Review `main.tf`
     You will observe:
     - resources now consume effective_*_rules
     - no inline transformations exist
     - no data cleaning occurs in resource blocks
+    
     This is a key milestone: Resources now consume clean data, rather than fixing it.
 
 5. Run planning
@@ -429,7 +479,9 @@ This is intentional. We are cleaning the data, not enforcing correctness.
     terraform state list
     ```
 
-8. Test that we have eliminated the churn due to the index ordinality used in Phase 0. In `terraform.tfvars`, re-add a second cidr “10.0.11.0/24” before the current cidrs on line 41 (leave the duplicated cidr, our code now deals with that)…
+8. Test that we have eliminated the churn due to the index ordinality used in Phase 0. 
+
+    In `terraform.tfvars`, re-add a second cidr “10.0.11.0/24” before the current cidrs on line 41 (leave the duplicated cidr, our code now deals with that)…
 
 9. Plan the deployment…
 
@@ -480,11 +532,15 @@ This is intentional. We are cleaning the data, not enforcing correctness.
     - unknown allow groups are not enforced
     - incorrect values may still reach the provider
 
-    Important distinction: Normalization makes the data consistent, but not necessarily correct. At this stage, invalid or unsafe values may still exist. We have improved structure and predictability, but we have not yet enforced correctness. This is expected.
+    **Important distinction** 
+    
+    Normalization makes the data consistent, but not necessarily correct. At this stage, invalid or unsafe values may still exist. We have improved structure and predictability, but we have not yet enforced correctness. This is expected.
 
     **Key takeaway**
 
-    Phase 1 made the configuration readable Phase 2 makes the configuration consistent
+    Phase 1 made the configuration readable 
+    
+    Phase 2 makes the configuration consistent
 
     **What comes next?**
 
@@ -510,7 +566,7 @@ In earlier phases, some invalid inputs were caught by Terraform or the cloud pro
 
 5. Verify there is no change to the current deployment;
 
-    ```powershell
+    ```
     terraform plan
     ```
 
@@ -518,9 +574,9 @@ In earlier phases, some invalid inputs were caught by Terraform or the cloud pro
 
 6.   Destroy all fifteen resources ahead of the testing that follows;
 
-    ```powershell
-    terraform destroy --auto-approve
-    ```
+```
+terraform destroy --auto-approve
+```
 
 ### Check 1. Unknown allow group
 
@@ -616,7 +672,7 @@ Rules with no effective CIDRs are a no-op. Currently there are no checks to flag
     terraform plan
     ```
 
-    The plan is for eleven resources to be added, not the original fifteen. The four missing resources are the allow_http_office ingress rules that originally included the three internal_networks cidrs and the one explicitly defined source cidr. This effectively leaves a no-op, no allow_http_office rules are created.
+    The plan is for eleven resources to be added, not the original fifteen. The four missing resources are the `allow_http_office` ingress rules that originally included the three internal_networks cidrs and the one explicitly defined source cidr. This effectively leaves a no-op, no `allow_http_office` rules are created.
 
     This highlights a critical behaviour: Terraform considers this configuration valid, even though it results in no effective rules. This is not a syntax error, and it is not rejected by the provider. It is logically incorrect, but structurally valid. This is a key risk in infrastructure as code: Terraform will successfully apply configurations that are logically incorrect unless explicit guardrails are introduced. This is why detection alone is not sufficient.
 
@@ -626,7 +682,7 @@ Rules with no effective CIDRs are a no-op. Currently there are no checks to flag
     terraform apply --auto-approve
     ```
 
-24. Switch to the Portal and verify the absence of any allow_http_office rules…
+24. Switch to the Portal and verify the absence of any `allow_http_office` rules…
 
 25. Destroy all deployed resources…
 
@@ -748,13 +804,6 @@ In earlier phases, the AWS provider enforced correctness. In Phase 3, Terraform 
 
     Variable validation checks incoming input values and fails early if they are unacceptable, preventing bad data from entering the configuration. It is best suited to simple, raw input rules. Lifecycle preconditions operate later, evaluating the final, computed model after all transformations and normalization have taken place. This allows you to enforce rules based on what Terraform is actually about to build. In simple terms, validation protects the front door, while preconditions halt Terraform before resource creation if the final computed model is invalid
 
-| Mechanism | Used for | Behaviour | Pros | Cons |
-|---|---|---|---|---|
-| Variable validation | Raw input rules | Fails before planning continues | Fails early; clear error messages; easy for users to fix; keeps bad data out completely | Limited context (no dependency awareness); can become overly restrictive; hard to express complex logic |
-| Lifecycle preconditions | Derived/normalized rule outcomes | Fails before resource creation | Full visibility of computed data; can enforce real correctness; perfect for derived logic; matches real-world constraints | Fails later (less immediate feedback); error messages can be more complex; slightly harder to reason about |
-
-    **Variable validation example**
-
 8. Open and review `variables.tf`. Each variable has one or more validation. For this discussion, focus on protocol validation on lines 63-69
 
 9. Test by updating line 30 of `terraform.tfvars` to introduce an invalid protocol…
@@ -817,15 +866,14 @@ In earlier phases, the AWS provider enforced correctness. In Phase 3, Terraform 
 
 ## Lab Conclusions
 
-This lab demonstrates a Terraform data pipeline: Input → Normalize → Detect → Enforce This pattern is commonly used in production Terraform to ensure that unreliable input is transformed into safe, governed infrastructure. Each phase builds on the previous one, moving from unreliable input to a fully governed and safe configuration model. Reflection: If you could only implement one mechanism in a real-world project - variable validation or lifecycle preconditions — which would you choose, and why? What risks would remain?
+This lab demonstrates a Terraform data pipeline: Input → Normalize → Detect → Enforce 
 
-*** Congratulations, you have completed this lab ***
+This pattern is commonly used in production Terraform to ensure that unreliable input is transformed into safe, governed infrastructure. Each phase builds on the previous one, moving from unreliable input to a fully governed and safe configuration model. 
+
+`Reflection`: If you could only implement one mechanism in a real-world project - variable validation or lifecycle preconditions — which would you choose, and why? What risks would remain?
+
+**Congratulations, you have completed this lab**
 
 ## Copyright
 
 © 2026 QA Michael Coulling-Green. All rights reserved. These lab materials are provided as part of an authorised training course. Course attendees may reuse these materials for their own personal learning and reference outside of the training session. Unauthorised copying, redistribution, publication, or use of these materials to deliver training is prohibited without prior written permission from the author.
-
-
----
-
-Version 1.0.2 | 16/07/26 | mcgreen@qa.com
