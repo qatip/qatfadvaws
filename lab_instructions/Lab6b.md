@@ -1,16 +1,14 @@
 # Advanced Terraform on AWS — Lab 6b
 ## Pipeline Automation
-Version 1.0.0 | 20/06/26 | mcgreen@qa.com
+Version 1.0.1 | Revised 28/11/26 | mcgreen@qa.com
+
+Original publication: 20/06/26
 
 ## Expected Duration
 
-Part 1 of this lab is expected to take between 20-30 minutes 
+Part 1 of this lab is expected to take between 20-30 minutes Part 2 of this lab is expected to take 40-50 minutes Part 3 of this lab is expected to take 40-50 minutes Part 4 of this lab is expected to take 3-5 minutes
 
-Part 2 of this lab is expected to take 40-50 minutes 
-
-Part 3 of this lab is expected to take 40-50 minutes 
-
-Total expected lab time is therefore between 100 - 130 minutes
+Total expected lab time is therefore between 103 - 135 minutes
 
 Take breaks between parts as needed.
 
@@ -62,15 +60,7 @@ By the end of this part of the lab, you will understand:
 
 This part of the lab is organised into the following phases:
 
-Phase 1 – Review the Promotion Model 
-
-Phase 2 – Review the Local Pipeline 
-
-Phase 3 – Pipeline-Applied Deployment 
-
-Phase 4 – Verify Environment Order Enforcement
-
- Phase 5 – Promote Through the Pipeline
+Phase 1 – Review the Promotion Model Phase 2 – Review the Local Pipeline Phase 3 – Pipeline-Applied Deployment Phase 4 – Verify Environment Order Enforcement Phase 5 – Promote Through the Pipeline
 
 #### Phase 1. Review the Promotion Model
 
@@ -91,7 +81,7 @@ The pipeline will:
 - Run Terraform in a fixed order
 - Enforce promotion rules
 - Refuse to run if rules are violated
-- Apply Terraform commands non-interactively
+- Apply Terraform non-interactively
 
 The pipeline does not:
 - Decide when to promote
@@ -99,23 +89,21 @@ The pipeline does not:
 - Auto-promote environments
 - Modify Terraform structure
 
-You have been given a set of PowerShell scripts at `artifacts/pipelines/powershell`. These scripts replace manual terraform init / plan / apply operations.
+You have been given a set of PowerShell scripts at artifacts/pipelines/powershell. These scripts replace manual terraform init / plan / apply operations.
 
 #### Phase 3. Pipeline-Applied Changes 1
 
 A decision has been made to promote network module version v1.0.0 in all environments.
 
-1. Update the pinned version of the `network module` to v1.0.0 in `main.tf` of each of the environments
+1. Update the pinned version of the network module to v1.0.0 in main.tf of each of the
+
+   environments
 
 2. Open a new terminal session and run each of these commands in turn …
 
    ```powershell
    c:\qatfadvaws\artifacts\pipelines\powershell\change-dev.ps1
-   ```
-   ```powershell
    c:\qatfadvaws\artifacts\pipelines\powershell\change-test.ps1
-   ```
-   ```powershell
    c:\qatfadvaws\artifacts\pipelines\powershell\change-prod.ps1
    ```
 
@@ -125,9 +113,11 @@ A decision has been made to promote network module version v1.0.0 in all environ
 
 #### Phase 4. Pipeline-Applied Changes 2
 
-A decision has been made to promote network module version v1.0.1 to the `DEV` environment.
+A decision has been made to promote network module version v1.0.1 to the DEV environment.
 
-4. Update the pinned version of the network module to `v1.0.1` in `main.tf` of the `dev` environments
+4. Update the pinned version of the network module to v1.0.1 in main.tf of the dev
+
+   environments
 
 5. Run …
 
@@ -139,7 +129,9 @@ A decision has been made to promote network module version v1.0.1 to the `DEV` e
 
 In this phase, you observe how the pipeline prevents unsafe promotion by trying to promote v1.0.1 of the network module to PROD, bypassing TEST.
 
-6. Update the pinned version of the network module to `v1.0.1` in `main.tf` of the `prod` environments
+6. Update the pinned version of the network module to v1.0.1 in main.tf of the prod
+
+   environments
 
 7. Run …
 
@@ -174,23 +166,7 @@ In the next part of the lab, you will move the same promotion logic into a share
 
 ## Pipelines
 
-Phase 1 – Create the env-roots GitHub Repository 
-
-Phase 2 – Copy DEV, TEST and PROD Environment Roots 
-
-Phase 3 – Configure GitHub Environments and Approvals 
-
-Phase 4 – Add the change-all Workflow 
-
-Phase 5 – Establish Trust Between GitHub Actions and AWS 
-
-Phase 6 – Release Network Module v1.0.2 
-
-Phase 7 – Promote Network v1.0.2 to DEV 
-
-Phase 8 – Attempt an Out-of-Order PROD Promotion 
-
-Phase 9 – Promote Network v1.0.2 Through TEST and PROD
+Phase 1 – Create the env-roots GitHub Repository Phase 2 – Copy DEV, TEST and PROD Environment Roots Phase 3 – Configure GitHub Environments and Approvals Phase 4 – Add the change-all Workflow Phase 5 – Establish Trust Between GitHub Actions and AWS Phase 6 – Release Network Module v1.0.2 Phase 7 – Promote Network v1.0.2 to DEV Phase 8 – Attempt an Out-of-Order PROD Promotion Phase 9 – Promote Network v1.0.2 Through TEST and PROD
 
 #### Phase 1. Create the env-roots GitHub Repository
 
@@ -198,11 +174,9 @@ In this phase, you create the GitHub repository that will hold the environment r
 
 In Lab6a, you published the network and compute modules to separate GitHub repositories. Those repositories contain reusable module code. In this phase, you create a third repository that will contain the environment root configurations for DEV, TEST and PROD.
 
-This separation is important: 
+This separation is important:
 
-module repositories: reusable building blocks 
-
-env-roots repository: environment configuration and promotion decisions
+module repositories       reusable building blocks env-roots repository      environment configuration and promotion decisions
 
 1. In GitHub, create a new repository named env-roots
 
@@ -210,7 +184,9 @@ env-roots repository: environment configuration and promotion decisions
 
 2. Create the repository as an empty repository.
 
-   Do not add: README, .gitignore, license
+   Do not add:
+
+   README .gitignore license
 
 3. In VS Code, open a PowerShell terminal.
 
@@ -263,6 +239,8 @@ The objective is to place the environment configuration under source control so 
 
 1. Copy the entire lab6\guided\envs folder into env-roots
 
+   The resulting structure should resemble:
+
 **Create a .gitignore file**
 
 Terraform creates local files that should not be committed to source control.
@@ -299,19 +277,19 @@ Terraform creates local files that should not be committed to source control.
 
 5. Refresh the GitHub repository page.
 
-6. Confirm the following are visible: envs/dev, envs/test, envs/prod
+6. Confirm the following are visible:
 
-7. Browse into each environment folder and verify the Terraform configuration has been uploaded successfully.
+   envs/dev envs/test envs/prod
+
+7. Browse into each environment folder and verify the Terraform configuration has been
+
+   uploaded successfully.
 
 **Checkpoint**
 
 At this point Github contains :
 
-Network Module Repo 
-
-Compute Module Repo 
-
-Environment Roots Repo
+Network Module Repo Compute Module Repo Environment Roots Repo
 
 The module repositories contain reusable Terraform modules.
 
@@ -355,9 +333,9 @@ The DEV environment is intended to provide rapid feedback and should not require
 
 11. Add yourself as an approver.
 
-12. `Save` the protection rules.
+12. Save the protection rules.
 
-13. Repeat these steps to create environment `prod`
+13. Repeat these steps to create environment prod
 
 **Why Are We Doing This?**
 
@@ -387,7 +365,7 @@ In the next phase, you will create your first GitHub Actions workflow and move t
 
 In Part 1, promotion rules were enforced by a local PowerShell pipeline. In this phase, you move that same logic into GitHub Actions.
 
-A provided `change all` workflow is intentionally centralised. It checks the pinned module versions across DEV, TEST and PROD, blocks unsafe leap-frogging, and then runs Terraform against each environment in order.
+A provided ‘change all’ workflow is intentionally centralised. It checks the pinned module versions across DEV, TEST and PROD, blocks unsafe leap-frogging, and then runs Terraform against each environment in order.
 
 1. Review the supplied workflow file:
 
@@ -401,9 +379,9 @@ A provided `change all` workflow is intentionally centralised. It checks the pin
    mkdir .github\workflows
    ```
 
-3. Copy the workflow `change-all.yml` into the repository:
+3. Copy the workflow change-all.yml into the repository:
 
-   From `artifacts\pipelines\gitactions` to `env-roots\.github\workflows`
+   From artifacts\pipelines\gitactions to env-roots\.github\workflows
 
 4. Commit and push the workflow:
 
@@ -418,15 +396,21 @@ A provided `change all` workflow is intentionally centralised. It checks the pin
 
 6. Select Actions.
 
-7. Confirm that the change-all workflow appears
+7. Confirm that the workflow appears:
+
+   change-all
 
    Do not run the workflow manually yet.
 
 **Review the workflow behaviour**
 
-The workflow will: Validate promotion order  Apply DEV > Apply TEST > Apply PROD
+The workflow will:
 
-The validation step checks that: TEST is not ahead of DEV PROD is not ahead of TEST
+Validate promotion order ↓ Apply DEV ↓ Apply TEST ↓ Apply PROD
+
+The validation step checks that:
+
+TEST is not ahead of DEV PROD is not ahead of TEST
 
 If leap-frogging is detected, the workflow fails before Terraform runs.
 
@@ -435,9 +419,10 @@ If leap-frogging is detected, the workflow fails before Terraform runs.
 At this point:
 - change-all.yml exists in .github/workflows
 - GitHub Actions can see the workflow
+- The workflow uses OIDC authentication
 - The workflow enforces DEV → TEST → PROD ordering
 
-In the next phase, you will configure OIDC.
+In the next phase, you will publish a new network module version for the workflow to promote.
 
 #### Phase 5. Establish Trust Between GitHub Actions and AWS
 
@@ -457,53 +442,43 @@ In this phase you will:
 
 **Create the GitHub OIDC Provider**
 
-1. In the AWS Console, navigate to IAM → Identity Providers → Add Provider.
+1. Navigate to IAM → Identity Providers → Add Provider.
 
-   Provider Type: OpenID Connect Provider URL: 
-   ```
-   token.actions.githubusercontent.com
-   ```
+   Provider Type: OpenID Connect Provider URL: token.actions.githubusercontent.com
 
-   Audience: 
-   ```
-   sts.amazonaws.com
-   ```
+   Audience: sts.amazonaws.com
 
-   Click on `Add Provider`. 
-   
    AWS now trusts GitHub as an identity provider, but it does not yet trust any particular GitHub repository.
 
 **Create the GitHub Actions IAM Role**
 
-2. Create a new `Web Identity` role using the GitHub OIDC provider.
+2. Create a new Web Identity role using the GitHub OIDC provider.
 
-   GitHub Organisation/User: `<your GitHub username>`
+   GitHub Organisation/User: <your GitHub username>
 
-   Repository: `env-roots`
+   Repository: env-roots
 
-3. Attach the `qatip-adv_policy` managed policy supplied for this lab. (If running this lab using your own AWS account, then select/create an appropriate policy)
+3. Attach the qatip-adv_policy managed policy supplied for this lab. (If running this lab
 
-   Role name: `gha-terraform-env-roots-role`
+   using your own AWS account, then select/create an appropriate policy)
 
-   Create the role and copy the Role ARN after the role has been created as you will need it later.
+   Role name: gha-terraform-env-roots-role
+
+   Copy the Role ARN after the role has been created as you will need it later.
 
 **Configure GitHub Repository Variables**
 
-4. In Github; Create the following repository variables (Settings > Secrets and Variables > Actions > Variables) using the values created during the previous phases.
+4. Create the following repository variables:
 
-   AWS_ROLE_ARN
-   
-   AWS_REGION
-   
-   TF_BACKEND_BUCKET
+   AWS_ROLE_ARN AWS_REGION TF_BACKEND_BUCKET
 
-   
+   using the values created during the previous phases.
 
 **Execute the Workflow**
 
 The supplied workflow contains an additional diagnostic step named 'Inspect OIDC Claims'.
 
-5. Run the `change-all` workflow.
+5. Run the change-all workflow.
 
    The workflow is expected to fail during the 'Configure AWS Credentials' step with an AssumeRoleWithWebIdentity error.
 
@@ -511,23 +486,21 @@ The supplied workflow contains an additional diagnostic step named 'Inspect OIDC
 
 **Inspect the GitHub Identity**
 
-6. Open the 'Inspect OIDC Claims' step and record the following values: `owner_id`, `repository_id`
+6. Open the 'Inspect OIDC Claims' step and record the following values (yours will differ):
 
 **Update the IAM Role Trust Policy**
 
-7. Open the `gha-terraform-env-roots-role` IAM Role → Trust relationships → Edit trust policy.
+7. Open the IAM Role → Trust relationships → Edit trust policy.
 
-8. Replace the generated trust policy with the template found at `c:\qatfadvaws\artifacts\oidc\template.json`, substituting the placeholders with your AWS account ID and values collected from the OIDC claims. Click `Update Policy` to save changes.
+8. Replace the generated trust policy with the template found at
 
-   ***Training use only***
+   c:\qatfadvaws\artifacts\oidc\template.json, substituting the placeholders with your AWS account ID and values collected from the OIDC claims.
+
+   Training use only
 
    This lab deliberately uses a wildcard in the IAM role’s OIDC subject condition:
 
-   repo:{GITHUB_OWNER}@{OWNER_ID}/env-roots@{REPOSITORY_ID}:* 
-   
-   This allows GitHub Actions jobs from different branches, pull requests and environments within the specified repository to assume the same AWS role. 
-   
-   Each matching job receives the permissions attached to that role; a workflow labelled “plan only” for example, does not restrict those AWS permissions.
+   repo:{GITHUB_OWNER}@{OWNER_ID}/env-roots@{REPOSITORY_ID}:* This allows GitHub Actions jobs from different branches, pull requests and environments within the specified repository to assume the same AWS role. Each matching job receives the permissions attached to that role; a workflow labelled “plan only” for example, does not restrict those AWS permissions.
 
    This configuration is too broad for production. Production trust policies should restrict access to approved branches, environments and workflows, with separate least-privilege roles for planning and deployment.
 
@@ -548,7 +521,9 @@ By the end of this phase you should understand:
 - AWS recognises GitHub's OIDC provider.
 - The IAM role defines which GitHub identities are trusted.
 - No AWS credentials are stored in GitHub.
-- Temporary credentials are issued only after the OIDC token claims satisfy the IAM role trust policy.
+- Temporary credentials are issued only after the OIDC token claims satisfy the IAM
+
+role trust policy.
 
 #### Phase 6. Release Network Module v1.0.2
 
@@ -556,17 +531,15 @@ Before a new module version can be promoted, it must first be published. In this
 
 At this point, the new version will exist in GitHub, but no environment will consume it yet.
 
-1. Open `module-repos\terraform-aws-module-network\main.tf` and update the module version to `v1.0.2`
+1. Open the network module repository in VS Code:
 
-2. Open `module-repos\terraform-aws-module-network\locals.tf` and update `mod_tags` to indicate a new manager..
+   C:\module-repos\terraform-aws-module-network
 
-   ```
-   mod_tags = merge(
-    var.base_tags,
-    {manager = "Clare Hooper (NetMod v1.0.2)"}
-   )
-   ```
-   As before, this is a trivial update, but it acts as a version change here. In production environments, actual resource changes would be made.
+2. Open: main.tf
+
+3. Update the module version to v1.0.2 ….
+
+   As before, this is essentially a no-op update of actual AWS resources, but it acts as a version change here. In production environments, actual resource changes would be made.
 
 4. Tag and push the module update to Git…
 
@@ -574,7 +547,6 @@ At this point, the new version will exist in GitHub, but no environment will con
    cd c:\module-repos\terraform-aws-module-network
    git status
    git add main.tf
-   git add locals.tf
    git commit -m "Publish network module v1.0.2"
    git tag v1.0.2
    git push origin main
@@ -602,13 +574,13 @@ This change will trigger the change-all workflow. The workflow will apply DEV fi
 
 1. Open the DEV environment root:
 
-   `c:\pipeline-repos\env-roots\envs\dev\main.tf`
+   c:\pipeline-repos\env-roots\envs\dev\main.tf
 
 2. Locate the network module source.
 
 3. Change the network module reference from:
 
-   `?ref=v1.0.1` to `?ref=v1.0.2`
+   ?ref=v1.0.1 to ?ref=v1.0.2
 
 4. Commit and push the change:
 
@@ -633,11 +605,13 @@ This change will trigger the change-all workflow. The workflow will apply DEV fi
 
 10. Verify that TEST and PROD complete without infrastructure changes.
 
-Note: GitHub may display warnings about Node.js versions used by third-party actions. These are GitHub platform warnings and do not indicate a Terraform or AWS failure.
+Note: GitHub may display warnings about Node.js versions used by third-party actions.
 
+These are GitHub platform warnings and do not indicate a Terraform or AWS failure.
 
+Continue if the workflow completes successfully.
 
-***Checkpoint***
+#### Checkpoint
 
 At this point:
 - DEV consumes network module v1.0.2
@@ -655,13 +629,13 @@ If an environment attempts to move ahead of the environment before it, the workf
 
 #### Update the PROD Environment
 
-1. Open  `c:\pipeline-repos\env-roots\envs\prod\main.tf`
+1. Open  c:\pipeline-repos\env-roots\envs\prod\main.tf
 
 2. Locate the network module source.
 
 3. Change the network module reference from:
 
-   `?ref=v1.0.1` to `?ref=v1.0.2`
+   ?ref=v1.0.1 to ?ref=v1.0.2
 
 #### Commit and Push the Change
 
@@ -694,7 +668,7 @@ If an environment attempts to move ahead of the environment before it, the workf
 
     Although GitHub Actions can automate execution, it does not change the promotion rules.
 
-***Checkpoint***
+#### Checkpoint
 
 At this point:
 - DEV  consumes network module v1.0.2
@@ -708,19 +682,21 @@ However:
 
 In the next and final phase of Part 2, you will follow the correct promotion path by advancing TEST and then PROD in sequence.
 
-#### Phase 9 – Promote Network Module v1.0.2 Through TEST and PROD
+#### Phase 9 – Promote Network Module v1.0.2 Through TEST
+
+#### and PROD
 
 Having observed an invalid promotion attempt, you will now follow the correct promotion path. The failed workflow showed that PROD cannot advance ahead of TEST. To resolve this, TEST must be promoted to the same network module version before PROD can be applied successfully.
 
 #### Update the TEST Environment
 
-1. Open:  `c:\pipeline-repos\env-roots\envs\test\main.tf`
+1. Open:  c:\pipeline-repos\env-roots\envs\test\main.tf
 
 2. Locate the network module source.
 
 3. Change the network module reference from:
 
-   `?ref=v1.0.1` to `?ref=v1.0.2`
+   ?ref=v1.0.1 to ?ref=v1.0.2
 
 #### Confirm the PROD Environment
 
@@ -732,12 +708,12 @@ Having observed an invalid promotion attempt, you will now follow the correct pr
 
 #### Commit and Push the Correct Promotion
 
-6. Commit the update:
+6. Commit the TEST update:
 
    ```powershell
    cd c:\pipeline-repos\env-roots
    git add .\envs\test\main.tf
-   git commit -m "Promote network module v1.0.2 to TEST and PROD"
+   git commit -m "Promote network module v1.0.2 to DEV"
    git push
    ```
 
@@ -763,9 +739,15 @@ Having observed an invalid promotion attempt, you will now follow the correct pr
 
 #### Verify the Final State
 
-14. Confirm the network module versions are now v1.0.2 accross all three environments and that the compute module is still fixed at v1.0.0
+14. Confirm the network module versions are now:
 
-***Takeaways***
+    DEV   network v1.0.2 TEST  network v1.0.2 PROD  network v1.0.2
+
+15. Confirm the compute module remains unchanged:
+
+    DEV   compute v1.0.0 TEST  compute v1.0.0 PROD  compute v1.0.0
+
+#### Takeaways
 
 At this point:
 - GitHub Actions has enforced promotion order
@@ -815,13 +797,14 @@ A more scalable approach is to give each environment its own deployment lifecycl
 This allows environments to advance independently while preserving the promotion model introduced in Lab 6A.
 
 Before continuing, it is important to remember the following principles:
-- Automation should not decide when promotion occurs. Automation should execute promotion once the decision has been made.
+
+- Automation should not decide when promotion occurs. Automation should execut epromotion once the decision has been made.
 - The promotion model itself is not changing.
 - Promotion is still represented by a module version pin change.
 - Human operators still decide when promotion should occur.
 - The only change is that deployment responsibility will move closer to the environment being promoted.
 
-***Checkpoint***
+#### Checkpoint
 
 Before proceeding, ensure you understand:
 - Why the change-all workflow was useful
@@ -840,7 +823,9 @@ A plan pipeline performs validation and planning activities but deliberately sto
 
 Unlike the deployment workflows introduced later in this lab, the plan pipelines do not execute terraform apply. Their purpose is to provide visibility rather than implementation.
 
-The objective of this phase is to introduce separate pull request plan workflows for DEV, TEST and PROD. Each workflow validates only its own environment, ensuring that a change proposed for DEV does not unnecessarily trigger planning activity for TEST or PROD.
+The objective of this phase is to introduce separate pull request plan workflows for DEV, TEST and PROD. All three workflows are triggered by a pull request targeting `main`, but each workflow checks whether its own environment has changed before authenticating to AWS or executing Terraform. This keeps Terraform execution environment-scoped while ensuring that every workflow can report a status to GitHub.
+
+The centralised `change-all.yml` deployment workflow remains active during this phase. Opening a pull request provides planning visibility; merging it into `main` may still trigger the centralised deployment workflow. We will retire that workflow in Phase 3.
 
 This provides a clear separation between:
 
@@ -880,17 +865,15 @@ The new workflows will be added using a feature branch and merged into the repos
 
 #### Add the PR Plan Workflows
 
-4. Review the supplied workflow files located in: `c:\qatfadvaws\artifacts\pipelines\gitactions`
+4. Review the supplied workflow files located in:
 
-   The following files have been provided:
+   c:\qatfadvaws\artifacts\pipelines\gitactions
 
-   - pr-plan-dev.yml 
-   - pr-plan-test.yml 
-   - pr-plan-prod.yml
+   The following files have been provided: pr-plan-dev.yml, pr-plan-test.yml, pr-plan-prod.yml
 
-5. Copy these workflow files into the existing GitHub workflows folder:
+5. Copy the supplied workflow files into the existing GitHub workflows folder:
 
-   `c:\pipeline-repos\env-roots\.github\workflows`
+   c:\pipeline-repos\env-roots\.github\workflows
 
      At this point, change-all.yml still exists. It will be retired in the next phase, after the PR plan workflows have been added and reviewed.
 
@@ -910,40 +893,64 @@ The new workflows will be added using a feature branch and merged into the repos
 
 7. Open the env-roots repository in GitHub.
 
-8. Create a pull request from: `add-pr-plan-pipelines` to `main`
+8. Create a pull request from: add-pr-plan-pipelines to main
 
-9. Review the changes, `merge` the pull request and `delete the branch`.
+9. Review the changes, merge the pull request and delete the branch.
+
+   **Note:** The existing `change-all` workflow has not yet been removed. If this merge triggers it, review the run, complete the TEST and PROD approvals when prompted (provided the proposed changes are as expected), and confirm that it completes without unintended infrastructure changes before proceeding.
 
 #### Verify the Workflows
 
-10. Refresh the repository and confirm the plan workflow files are visible under .github/workflows
+10. Refresh the repository and confirm the workflow files are visible under:
+
+    .github/workflows
 
 11. Navigate to: Actions
 
-12. Confirm the following workflows are listed:
-
-    - pr-plan-dev 
-    - pr-plan-test 
-    - pr-plan-prod
+12. Confirm the following workflows are listed: pr-plan-dev, pr-plan-test, pr-plan-prod
 
 #### Understanding the Workflows
 
 Each workflow is responsible for a single environment:
 
-- pr-plan-dev.yml > DEV only 
-- pr-plan-test.yml > TEST only 
-- pr-plan-prod.yml > PROD only
+| Workflow | Environment scope |
+| --- | --- |
+| `pr-plan-dev.yml` | `envs/dev/` |
+| `pr-plan-test.yml` | `envs/test/` |
+| `pr-plan-prod.yml` | `envs/prod/` |
 
-Each workflow performs:
+All three workflows are triggered for pull requests targeting `main`. However, being triggered is not the same as executing a Terraform plan.
 
-```powershell
-Terraform Init > Terraform Validate > Terraform Plan > STOP
+Each workflow first checks which files have changed in the pull request. For example, the DEV workflow contains a `Detect DEV changes` step. If DEV changes are detected, the workflow configures AWS credentials, sets up Terraform and runs the governance and planning step. If no DEV changes are detected, those steps are skipped and the job completes successfully.
+
+The conditional execution is controlled by:
+
+```yaml
+if: steps.scope.outputs.relevant == 'true'
 ```
 
-- No Terraform Apply occurs.
-- No infrastructure is modified.
-- No state is changed.
-- The workflows exist solely to provide visibility into proposed changes.
+For a pull request containing only a DEV change, the expected behaviour is:
+
+| Workflow | Triggered? | AWS authentication and Terraform plan | Expected status |
+| --- | --- | --- | --- |
+| `pr-plan-dev` | Yes | Executed | Success, if planning succeeds |
+| `pr-plan-test` | Yes | Skipped | Success |
+| `pr-plan-prod` | Yes | Skipped | Success |
+
+**Pause for thought: Why not use workflow-level path filters?**
+
+Later, in Lab 7, the PR plan jobs will be configured as required status checks for the protected `main` branch. If a workflow is skipped entirely because of a workflow-level path filter, its required check may remain pending and prevent the pull request from being merged. By triggering all three workflows and filtering execution within each workflow, unrelated environments can report a successful check without executing Terraform.
+
+This is intentional: all three workflows run, but only the relevant environment plans run.
+
+Where Terraform execution is required, the sequence is:
+
+Terraform Init → Terraform Validate → Terraform Plan → STOP
+
+- The PR plan workflows never execute `terraform apply`.
+- No infrastructure is modified by the PR planning workflows.
+- Their purpose is to provide visibility into proposed changes.
+- A successful check for an unrelated environment means no relevant change was detected, not that a Terraform plan was performed.
 
 #### Verify PR Planning Behaviour
 
@@ -980,13 +987,13 @@ Before introducing environment-scoped deployment pipelines, verify that the new 
 
 18. Open the Pull Request and observe the workflow activity.
 
-19. Confirm pr-plan-dev runs automatically.
+19. Confirm `pr-plan-dev` runs automatically and detects DEV changes.
 
-20. Confirm  pr-plan-test does not run.
+20. Confirm `pr-plan-test` also runs automatically but detects no relevant TEST changes. Verify that AWS authentication and Terraform execution are skipped and that the job reports success.
 
-21. Confirm pr-plan-prod does not run.
+21. Confirm `pr-plan-prod` behaves in the same way for PROD.
 
-22. Review the workflow output.
+22. Review the DEV workflow output. Expand the change detection step in the TEST and PROD workflows to confirm why their Terraform steps were skipped.
 
     You should observe:
 
@@ -1002,9 +1009,7 @@ Before introducing environment-scoped deployment pipelines, verify that the new 
 
     Infrastructure is up-to-date.
 
-23. Because only a comment was added, Terraform should report no infrastructure
-
-    changes.
+23. Because only a comment was added, Terraform should report no infrastructure changes.
 
 #### Complete the Pull Request
 
@@ -1013,21 +1018,41 @@ Before introducing environment-scoped deployment pipelines, verify that the new 
     Merge Pull Request Confirm the merge.
 
 25. Observe that:
-    - The PR has been completed successfully
-    - No infrastructure changes occurred
-    - The merge represents acceptance of the proposed change
+    - The PR has been completed successfully.
+    - The merge represents acceptance of the proposed change.
+    - The existing `change-all` workflow is triggered by the merge into `main`.
 
-26. Delete the branch..
+    **Important – transitional deployment behaviour**
+
+    The environment-scoped PR plan workflows have been introduced, but the centralised deployment workflow is still active. The PR planning workflows do not deploy anything themselves. It is the merge to `main` that triggers `change-all`.
+
+    The current lifecycle is:
+
+    ```text
+    Pull request (DEV comment-only change)
+        -> All three PR plan workflows report a status
+        -> DEV executes Terraform plan; TEST and PROD skip Terraform
+        -> Review and merge into main
+        -> change-all validates promotion order
+        -> DEV apply -> TEST approval/apply -> PROD approval/apply
+    ```
+
+    Navigate to **Actions**, open the `change-all` run, and review its progress. Complete the TEST and PROD approvals when prompted, after confirming the proposed changes are as expected. Since only a comment has been added, no infrastructure changes should be required in any environment. Investigate any unexpected changes before approving or continuing.
+
+    Confirm that the workflow completes successfully. This centralised deployment activity is expected at this stage and illustrates why the next phase removes `change-all.yml`.
+
+26. Delete the branch.
 
 #### Checkpoint
 
 At this point:
 - The existing .github/workflows folder now contains three new PR plan workflows
 - change-all.yml still exists and has not yet been retired
-- Each PR plan workflow targets a single environment
-- The PR plan workflows perform Terraform validation and planning only
-- No deployment activity occurs
-- Planning and deployment responsibilities are now separated
+- All three PR plan workflows run on pull requests to `main`, but only relevant environments execute Terraform.
+- The PR plan workflows perform validation and planning only; unrelated jobs report success without Terraform.
+- Merging the PR still triggers the centralised `change-all` deployment workflow.
+- The comment-only change should produce no infrastructure changes, even though deployment execution occurs.
+- Planning and deployment responsibilities are separated, but deployment is not yet environment-scoped.
 
 #### Phase 3 – Remove the Centralised Deployment Workflow
 
@@ -1061,15 +1086,11 @@ Note: The original workflow remains available within artifacts\pipelines\gitacti
 
 #### Understanding the Transition
 
-At this point, planning is environment-scoped:
-
-pr-plan-dev pr-plan-test pr-plan-prod
+At this point, planning is environment-scoped: pr-plan-dev, pr-plan-test, pr-plan-prod
 
 However, deployment is temporarily absent. This gap is intentional. The centralised deployment workflow has been removed, but the environment-scoped deployment workflows have not yet been added.
 
-In the next phase, you will introduce:
-
-change-dev.yml change-test.yml change-prod.yml
+In the next phase, you will introduce: change-dev.yml, change-test.yml, change-prod.yml
 
 These workflows will provide environment-scoped deployment capabilities and complete the transition away from the centralised deployment model.
 
@@ -1080,9 +1101,7 @@ At this point:
 - Environment-scoped planning workflows remain active
 - No deployment workflows currently exist
 - The repository is ready for environment-scoped deployment workflows
-- The original change-all.yml workflow remains available within the artifacts folder for
-
-future reference
+- The original change-all.yml workflow remains available within the artifacts folder for future reference
 
 #### Phase 4 – Add Environment-Scoped Change Pipelines
 
@@ -1094,9 +1113,7 @@ In this phase, you add dedicated change workflows for DEV, TEST and PROD. These 
 
     c:\qatfadvaws\artifacts\pipelines\gitactions
 
-    The following change workflow files have been provided:
-
-    change-dev.yml change-test.yml change-prod.yml
+    The following change workflow files have been provided: change-dev.yml, change-test.yml, change-prod.yml
 
 31. Copy these workflow files into: c:\pipeline-repos\env-roots\.github\workflows
 
@@ -1120,7 +1137,6 @@ In this phase, you add dedicated change workflows for DEV, TEST and PROD. These 
     git add .github\workflows\change-prod.yml
     git commit -m "Add environment change workflows"
     git push -u origin add-env-change-pipelines
-    git branch -D add-env-change-pipelines
     ```
 
 #### Create and Merge the Pull Request
@@ -1145,15 +1161,11 @@ In this phase, you add dedicated change workflows for DEV, TEST and PROD. These 
 
 The repository now contains two workflow types.
 
-PR plan workflows:
+PR plan workflows: pr-plan-dev, pr-plan-test and pr-plan-prod
 
-pr-plan-dev, pr-plan-test and pr-plan-prod
+These run during pull requests targeting `main`. Each checks its environment scope, skips AWS and Terraform steps if unrelated, and otherwise stops after `terraform plan`.
 
-These run during pull requests and stop after terraform plan.
-
-Change workflows:
-
-change-dev, change-test and change-prod
+Change workflows: change-dev, change-test and change-prod
 
 These run after accepted changes are merged and execute Terraform against the target environment.
 
@@ -1161,9 +1173,6 @@ The new lifecycle is:
 
 Pull Request ↓ Environment PR Plan ↓ Review ↓ Merge ↓ Environment Change Workflow ↓ Approval if required ↓
 
-```powershell
-Terraform Apply
-```
 
 #### Verify Environment-Scoped Deployment
 
@@ -1209,11 +1218,9 @@ This exercise demonstrates the complete workflow lifecycle while confirming that
 
 45. Create a Pull Request from test-env-deployment to main
 
-46. Confirm that only pr-plan-dev runs automatically.
+46. Confirm that all three PR plan workflows run automatically. Only `pr-plan-dev` should execute AWS authentication and Terraform planning; `pr-plan-test` and `pr-plan-prod` should skip these steps and report success.
 
-47. Review the workflow output. Because only a comment was added, Terraform should
-
-    report that no infrastructure changes are required.
+47. Review the workflow output. Because only a comment was added, Terraform should report that no infrastructure changes are required.
 
 #### Merge the Pull Request
 
@@ -1245,8 +1252,8 @@ This exercise demonstrates the complete workflow lifecycle while confirming that
 At this point:
 - The PR planning workflow has been validated
 - The environment deployment workflow has been validated
-- A DEV change triggered only DEV workflows
-- TEST and PROD remained unaffected
+- A DEV change triggered all three PR plan checks, but only DEV executed Terraform planning.
+- Only the DEV deployment workflow should execute after the merge; TEST and PROD infrastructure remained unaffected.
 - Planning and deployment remain separate activities
 - Environment-scoped deployment has been successfully implemented
 
@@ -1267,15 +1274,18 @@ This will prove that the new model works for a real promotion, not just a commen
 
 #### Release Network Module v1.0.3
 
-53. Open the network module repository:
+53. Open `module-repos\terraform-aws-module-network\main.tf` and update the module version to `v1.0.3`
 
-    c:\module-repos\terraform-aws-module-network
+54. Open `module-repos\terraform-aws-module-network\locals.tf` and update `mod_tags` to indicate a new manager:
 
-54. Open: main.tf
+      ```
+      mod_tags = merge(
+        var.base_tags,
+        {manager = "Oliver Walsh (NetMod v1.0.3)"}
+      )
+      ```
 
-55. Update the module version to v1.0.3
-
-    As before, this is essentially a no-op update of actual AWS resources, but it acts as a version change here. In production environments, actual resource changes would be made.
+55. As before, this is essentially a no-op update of actual AWS resources, but it acts as a version change here. In production environments, actual resource changes would be made.
 
 56. Tag and push the module update to Git…
 
@@ -1283,6 +1293,7 @@ This will prove that the new model works for a real promotion, not just a commen
     cd c:\module-repos\terraform-aws-module-network
     git status
     git add main.tf
+    git add locals.tf
     git commit -m "Publish network module v1.0.3"
     git tag v1.0.3
     git push origin main
@@ -1325,25 +1336,19 @@ This will prove that the new model works for a real promotion, not just a commen
 
 63. Create a Pull Request from promote-network-v103-dev to main
 
-64. Review the changed file. The pull request should show a version pin change in
-
-    envs/dev/main.tf from v1.0.2 to  v1.0.3
+64. Review the changed file. The pull request should show a version pin change in envs/dev/main.tf from `v1.0.2` to  `v1.0.3`
 
 #### Observe the PR Plan Workflow
 
-65. Confirm that only the DEV PR plan workflow pr-plan-dev runs automatically
+65. Confirm that all three PR plan workflows run automatically, but only `pr-plan-dev` executes Terraform planning. Verify that TEST and PROD report success without executing Terraform.
 
-66. Open the pr-plan-dev workflow and review the Terraform plan. The proposed change
-
-    is still only a proposal.
+66. Open the pr-plan-dev workflow and review the Terraform plan. The proposed change is still only a proposal.
 
 #### Merge the Pull Request
 
 67. Once the plan has completed successfully, merge the Pull Request.
 
-68. Delete the temporary branch. The merge represents acceptance of the proposed DEV
-
-    promotion.
+68. Delete the temporary branch. The merge represents acceptance of the proposed DEV promotion.
 
 #### Observe the DEV Change Workflow
 
@@ -1372,7 +1377,7 @@ At this point:
 - The PR plan workflow showed the proposed DEV change before deployment
 - The PR merge accepted the proposed change
 - The DEV change workflow applied the accepted change
-- TEST and PROD did not run
+- TEST and PROD PR plan checks ran but skipped Terraform; no TEST or PROD deployment should have occurred.
 - TEST and PROD remain on network module v1.0.2
 - The environment-scoped promotion model has been proven end-to-end
 
@@ -1386,17 +1391,17 @@ The objective of this part of the lab was not simply to deploy Terraform using G
 
 #### Review the Evolution
 
-At the beginning of Lab 6A, promotion was represented by a module version pin change:
-
-v1.0.2 > v1.0.3
+At the beginning of Lab 6A, promotion was represented by a module version pin change: v1.0.2 > v1.0.3
 
 A change to the version pin represented a promotion decision.
 
-In Part 2, promotion execution became automated through a centralised change-all deployment workflow.
+In Part 2, promotion execution became automated through a centralised `change-all` deployment workflow.
 
 In Part 3, planning and deployment became environment-scoped:
 
-pr-plan-dev   →   change-dev pr-plan-test  →   change-test pr-plan-prod  →   change-prod
+- pr-plan-dev   →   change-dev 
+- pr-plan-test  →   change-test 
+- pr-plan-prod  →   change-prod
 
 Each environment now progresses independently while preserving the promotion model established in Lab 6A.
 
@@ -1431,9 +1436,7 @@ You can identify:
 - Pull Request Merged
 - Deployment Executed
 
-However, ask yourself the following question:
-
-Where was the promotion decision explicitly recorded?
+However, ask yourself the following question: `Where was the promotion decision explicitly recorded?`
 
 Was the decision represented by:
 - The version pin change?
@@ -1493,11 +1496,3 @@ The next lab explores how organisations address this final gap.
 © 2026 QA Michael Coulling-Green. All rights reserved. These lab materials are provided as part of an authorised training course. Course attendees may reuse these materials for their own personal learning and reference outside of the training session. Unauthorised copying, redistribution, publication, or use of these materials to deliver training is prohibited without prior written permission from the author.
 
 ---
-
-## Conversion notes
-
-- Screenshots omitted; source text and workflow preserved. In Part 2 Phase 5 step 6, inspect the OIDC claims in the workflow diagnostic output and use the values required by the supplied trust-policy template (including owner and repository IDs and subject).
-- The original duration mentions Part 4 although only three parts are present.
-- The original uses Git tags and a training-only wildcard OIDC subject. These have not been redesigned.
-- The original branch deletion commands are retained; they are intended only for the disposable lab repository. The command deleting `add-env-change-pipelines` while checked out may fail; switch to `main` before deleting if required.
-- The original TEST promotion commit message says DEV; this is a label inconsistency, not a change to the target file.
