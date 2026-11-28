@@ -53,7 +53,7 @@ permissions:
 #   3 = Enable ownership governance in later labs.
 # ENV_DIR, STATE_KEY and VAR_FILE keep this workflow locked to PROD.
 env:
-  FEATURE_PHASE: "3"  # 1=No governance, 2=Intent governance, 3=Intent + Ownership
+  FEATURE_PHASE: "1"  # 1=No governance, 2=Intent governance, 3=Intent + Ownership
   ENV_DIR: "envs/prod"
   EXPECTED_ENV: "prod"
   PROMOTION_TFVARS: "envs/prod/prod-promotion.tfvars"
