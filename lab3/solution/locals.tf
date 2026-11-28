@@ -161,6 +161,4 @@ locals {
     for subnet_name, cidr in var.subnet_cidrs :
     trimspace(subnet_name) => trimspace(cidr)
   }
-
-
 }
